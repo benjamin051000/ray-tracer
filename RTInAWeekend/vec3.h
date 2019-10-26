@@ -1,11 +1,9 @@
 #pragma once
 #include <math.h>
-//#include <stdlib.h> //What is this for?
 #include <iostream>
 using namespace std;
 
-class vec3 {
-public:
+struct vec3 {
 	//Constructors
 	vec3() {}
 	vec3(float e0, float e1, float e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
@@ -131,6 +129,6 @@ inline vec3& vec3::operator/=(const float t) {
 	return *this;
 }
 
-inline vec3 unit_vector(vec3 &v) {
+inline vec3 unit_vector(const vec3 &v) {
 	return v / v.length();
 }
