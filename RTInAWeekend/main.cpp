@@ -1,38 +1,12 @@
 #include <iostream>
-#include "ray.h"
 #include <fstream>
+#include "hittable_list.h"
+#include "sphere.h"
+#include "float.h"
 
-float hit_sphere(const vec3 &center, const float radius, const ray &r) {
-	vec3 oc = r.origin() - center;
-	
-	//Calculate discriminant
-	float a = dot(r.direction(), r.direction());
-	float b = 2 * dot(oc, r.direction());
-	float c = dot(oc, oc) - radius*radius;
-	float discriminant = b*b - 4*a*c;
-
-	if (discriminant < 0) {
-		return -1.0;
-	}
-	else {
-		//Send nearest hit point
-		return (-b - sqrt(discriminant)) / (2.f * a);
-	}
-}
-
-vec3 color(const ray &r) {
-	float t = hit_sphere(vec3(0, 0, -1), 0.5, r);
-	
-	if (t > 0.0) {
-		vec3 N = unit_vector(r.point_at_parameter(t) - vec3(0, 0, -1));
-		return 0.5 * vec3(N.x() + 1, N.y() + 1, N.z() + 1);
-	}
-
-	vec3 unit_direction = r.direction();
-	unit_direction.make_unit_vector();
-	t = 0.5 * (unit_direction.y() + 1.0);
-
-	return (1.0 - t) * vec3(1, 1, 1) + t * vec3(.5, .7, 1);
+vec3 color(const ray &r, hittable *world) {
+	hit_record rec;
+	if(world->hit(r, 0, FLT_MAX, rec))//unfinished
 }
 
 int main() {
