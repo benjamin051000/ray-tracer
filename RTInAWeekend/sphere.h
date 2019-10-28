@@ -21,7 +21,7 @@ bool sphere::hit(const ray& r, float tmin, float tmax, hit_record& rec) const {
 	float discriminant = b * b - 4 * a * c;
 
 	if (discriminant > 0) {
-		float t = (-b - sqrt(b * b - 4 * a * c)) / a; //why not over 2a?
+		float t = (-b - sqrt(b * b - 4 * a * c)) / (2 * a); //why not over 2a?
 		if (t < tmax && t > tmin) {
 			rec.t = t;
 			rec.p = r.point_at_parameter(rec.t);
@@ -29,8 +29,8 @@ bool sphere::hit(const ray& r, float tmin, float tmax, hit_record& rec) const {
 			return true;
 		}
 
-		t = (-b + sqrt(b * b - a * c) / a);
-		if (t < tmax && t > tmin) { //TODO refactor this into the first if statement
+		t = (-b + sqrt(b * b - a * c)) / (2 * a);
+		if (t < tmax && t > tmin) { //refactor this into the first if statement?
 			rec.t = t;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - center) / radius;
