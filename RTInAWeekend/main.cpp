@@ -5,10 +5,13 @@
 #include "float.h"
 #include "camera.h"
 
+float random();
+
 vec3 color(const ray &r, hittable *world) {
 	hit_record rec;
-	if (world->hit(r, 0, FLT_MAX, rec)) {
-		return 0.5 * vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1);
+	if (world->hit(r, 0.001, FLT_MAX, rec)) {
+		vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+		return 0.5 * color(ray(rec.p, target - rec.p), world);
 	}
 	else {
 		vec3 unit_dir = unit_vector(r.direction());
@@ -17,16 +20,13 @@ vec3 color(const ray &r, hittable *world) {
 	}
 }
 
-//From stackoverflow
-float random() {
-	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-}
+
 
 int main() {
 	//Resolution
-	unsigned int nx = 400, ny = 200;
+	unsigned int nx = 800, ny = 400;
 	//Samples per pixel
-	int spp = 10;
+	int spp = 100;
 	
 	std::ofstream out("image.ppm");
 	
@@ -56,6 +56,7 @@ int main() {
 			}
 
 			col /= float(spp);
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
 			int  ir = int(255.99 * col[0]);
 			int  ig = int(255.99 * col[1]);
 			int  ib = int(255.99 * col[2]);

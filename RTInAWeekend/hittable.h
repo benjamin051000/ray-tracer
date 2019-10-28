@@ -1,9 +1,12 @@
 #pragma once
 #include "ray.h"
 
+class material;
+
 struct hit_record {
 	float t;
 	vec3 p, normal;
+	material* material;
 };
 
 struct hittable {
