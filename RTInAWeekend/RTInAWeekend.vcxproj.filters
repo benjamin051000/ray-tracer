@@ -30,6 +30,9 @@
     <ClInclude Include="hittable_list.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

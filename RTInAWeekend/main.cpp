@@ -3,6 +3,7 @@
 #include "hittable_list.h"
 #include "sphere.h"
 #include "float.h"
+#include "camera.h"
 
 vec3 color(const ray &r, hittable *world) {
 	hit_record rec;
@@ -16,39 +17,51 @@ vec3 color(const ray &r, hittable *world) {
 	}
 }
 
+//From stackoverflow
+float random() {
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
 int main() {
-	int nx = 200;
-	int ny = 100;
+	//Resolution
+	unsigned int nx = 400, ny = 200;
+	//Samples per pixel
+	int spp = 10;
 	
 	std::ofstream out("image.ppm");
 	
 	out << "P3\n" << nx << " " << ny << "\n255\n";
 	
-	const vec3 lower_left_corner(-2, -1, -1);
-	const vec3 horizontal(4, 0, 0);
-	const vec3 vertical(0, 2, 0);
-	const vec3 origin(0, 0, 0);
-	
-	hittable *list[2];
+	const unsigned int list_size = 2;
+	hittable *list[list_size];
 	list[0] = new sphere(vec3(0, 0, -1), 0.5);
 	list[1] = new sphere(vec3(0, -100.5, -1), 100);
+	
 
-	hittable *world = new hittable_list(list, 2);
+	hittable *world = new hittable_list(list, list_size);
+	camera cam;
 
 	//Iterate through each pixel
-	for (int j = ny - 1; j >= 0; j--) {
-		for (int i = 0; i < nx; i++) {
-			float u = float(i) / float(nx);
-			float v = float(j) / float(ny);
+	for (int y = ny - 1; y >= 0; y--) {
+		for (unsigned int x = 0; x < nx; x++) {
+			vec3 col(0, 0, 0);
 
-			ray r(origin, lower_left_corner + u * horizontal + v * vertical);
-			
-			vec3 col = color(r, world);
-			int ir = int(255.99 * col[0]),
-				ig = int(255.99 * col[1]),
-				ib = int(255.99 * col[2]);
+			for (int s = 0; s < spp; s++) {
+				float u = float(x + random()) / float(nx);
+				float  v = float(y + random()) / float(ny);
+
+				ray r = cam.get_ray(u, v);
+				vec3 p = r.point_at_parameter(2.0);
+				col += color(r, world);
+			}
+
+			col /= float(spp);
+			int  ir = int(255.99 * col[0]);
+			int  ig = int(255.99 * col[1]);
+			int  ib = int(255.99 * col[2]);
 			out << ir << " " << ig << " " << ib << "\n";
 		}
+		std::cout << "Percent complete: " << 100 - float(y) / ny * 100 << "%\n";
 	}
 	out.close();
 }
