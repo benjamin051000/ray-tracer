@@ -34,19 +34,20 @@ int main() {
 	//Resolution
 	const int nx = 400, ny = 200;
 	//Samples per pixel
-	const unsigned int spp = 10;
+	const unsigned int spp = 100;
 	
 	//Set up the output file
 	std::ofstream out("image.ppm");
 	out << "P3\n" << nx << " " << ny << "\n255\n";
 	
 	//Initialize the objects in the scene
-	const unsigned int list_size = 4;
+	const unsigned int list_size = 5;
 	hittable *list[list_size];
-	list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.8, 0.3, 0.3)));
-	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0)));
+	list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
+	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
 	list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
-	list[3] = new sphere(vec3(-1, 0, -1), 0.5, new metal(vec3(0.8, 0.8, 0.8), 1));
+	list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
+	list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectric(1.5));
 
 	hittable *world = new hittable_list(list, list_size);
 	camera cam;
