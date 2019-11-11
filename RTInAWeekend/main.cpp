@@ -34,7 +34,7 @@ int main() {
 	//Resolution
 	const int nx = 800, ny = 600;
 	//Samples per pixel
-	const unsigned int spp = 100;
+	const unsigned int spp = 10;
 	
 	//Set up the output file
 	std::ofstream out("image.ppm");
