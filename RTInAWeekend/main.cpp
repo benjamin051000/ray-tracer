@@ -28,11 +28,11 @@ vec3 color(const ray &r, hittable *world, int depth) {
 	}
 }
 
-
+hittable* random_scene();
 
 int main() {
 	//Resolution
-	const int nx = 400, ny = 200;
+	const int nx = 800, ny = 600;
 	//Samples per pixel
 	const unsigned int spp = 100;
 	
@@ -41,18 +41,29 @@ int main() {
 	out << "P3\n" << nx << " " << ny << "\n255\n";
 	
 	//Initialize the objects in the scene
-	const unsigned int list_size = 5;
+	/*const unsigned int list_size = 5;
 	hittable *list[list_size];
 	list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
 	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
 	list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
 	list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
-	list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectric(1.5));
+	list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectric(1.5));*/
+	
+	
 
-	hittable *world = new hittable_list(list, list_size);
-	camera cam;
+	/*hittable *world = new hittable_list(list, list_size);*/
+	hittable* world = random_scene();
+	
+	//Set up camera
+	vec3 lookfrom(13, 2, 3), lookat(0, 0, 0);
+	float dist_to_focus = (lookfrom - lookat).length(), //can be any number ig
+		aperture = 0;
+	camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
+
 
 	/*----------Render the image----------*/
+	double percentage = 0;
+	const double percentChange = 100.0 / ny ;
 
 	//Iterate through each pixel. Y iterates backwards.
 	for (int y = ny - 1; y >= 0; y--) {
@@ -60,6 +71,7 @@ int main() {
 			vec3 col(0, 0, 0);
 			//Repeat samples-per-pixel times
 			for (unsigned int s = 0; s < spp; s++) {
+
 				//Get a random ray in the pixel
 				float u = float(x + random()) / float(nx);
 				float  v = float(y + random()) / float(ny);
@@ -67,6 +79,7 @@ int main() {
 				ray r = cam.get_ray(u, v);
 				col += color(r, world, 0);
 			}
+			
 			//Average the color value
 			col /= float(spp);
 			//Not sure why but square root the colors
@@ -78,7 +91,50 @@ int main() {
 			const int  ib = int(255.99 * col[2]);
 			out << ir << " " << ig << " " << ib << "\n";
 		}
-		std::cout << "Percent complete: " << 100 - float(y) / ny * 100 << "%" << std::endl;
+		percentage += percentChange;
+		std::cout << "Percent complete: " << percentage << "%" << std::endl;
 	}
 	out.close();
+}
+
+
+#define random_double() random()
+
+hittable* random_scene() {
+	int n = 500;
+	hittable** list = new hittable * [n + 1];
+	list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
+	int i = 1;
+	for (int a = -11; a < 11; a++) {
+		for (int b = -11; b < 11; b++) {
+			float choose_mat = random_double();
+			vec3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
+			if ((center - vec3(4, 0.2, 0)).length() > 0.9) {
+				if (choose_mat < 0.8) {  // diffuse
+					list[i++] = new sphere(center, 0.2,
+						new lambertian(vec3(random_double() * random_double(),
+							random_double() * random_double(),
+							random_double() * random_double())
+						)
+					);
+				}
+				else if (choose_mat < 0.95) { // metal
+					list[i++] = new sphere(center, 0.2,
+						new metal(vec3(0.5 * (1 + random_double()),
+							0.5 * (1 + random_double()),
+							0.5 * (1 + random_double())),
+							0.5 * random_double()));
+				}
+				else {  // glass
+					list[i++] = new sphere(center, 0.2, new dielectric(1.5));
+				}
+			}
+		}
+	}
+
+	list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectric(1.5));
+	list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+	list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+
+	return new hittable_list(list, i);
 }
