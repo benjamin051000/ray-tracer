@@ -1,11 +1,7 @@
 #pragma once
 #include "hittable.h"
 
-//Random functions
-float random() {
-	//From stackoverflow
-	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-}
+
 vec3 random_in_unit_sphere() {
 	vec3 p;
 	do {
