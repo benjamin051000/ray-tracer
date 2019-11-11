@@ -1,6 +1,6 @@
 #pragma once
 #include <math.h>
-#include <iostream>
+#include <iostream> //May not be necessary
 using namespace std;
 
 struct vec3 {

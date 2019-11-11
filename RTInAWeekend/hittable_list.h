@@ -5,8 +5,9 @@ struct hittable_list : public hittable {
 	hittable_list() {}
 	hittable_list(hittable** l, int n) { list = l; list_size = n; }
 
+	//An array of hittable objects
 	hittable** list;
-	unsigned int list_size; //Unsigned?
+	unsigned int list_size;
 
 	virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 };
@@ -16,9 +17,9 @@ bool hittable_list::hit(const ray& r, float tmin, float tmax, hit_record& rec) c
 	bool hit_anything = false;
 	double closest_t = tmax;
 
-	//For each item in the list
+	//For each hittable in the list
 	for (unsigned int i = 0; i < list_size; i++) {
-		//See if it hits anything in front of closest_t
+		//See if the ray hits anything in front of closest_t
 		if (list[i]->hit(r, tmin, closest_t, temp_rec)) {
 			hit_anything = true;
 			closest_t = temp_rec.t;

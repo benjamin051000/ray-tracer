@@ -1,8 +1,20 @@
 #pragma once
 #include "hittable.h"
 
-vec3 random_in_unit_sphere();
+//Random functions
+float random() {
+	//From stackoverflow
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+vec3 random_in_unit_sphere() {
+	vec3 p;
+	do {
+		p = 2.0 * vec3(random(), random(), random()) - vec3(1, 1, 1);
+	} while (p.squared_length() >= 1.0);
+	return p;
+}
 
+//ABC
 class material {
 public:
 	virtual bool scatter(
@@ -12,8 +24,8 @@ public:
 		ray& scattered) const = 0;
 };
 
+//A diffuse (matte) material.
 class lambertian : public material {
-	//A diffuse (matte) material.
 public:
 	lambertian(const vec3& a) : albedo(a) {}
 	virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const {
@@ -26,23 +38,12 @@ public:
 	vec3 albedo;
 };
 
-//From stackoverflow
-float random() {
-	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-}
-
-vec3 random_in_unit_sphere() {
-	vec3 p;
-	do {
-		p = 2.0 * vec3(random(), random(), random()) - vec3(1, 1, 1);
-	} while (p.squared_length() >= 1.0);
-	return p;
-}
-
+//TODO: Put this in metal class? If not used by anything else
 vec3 reflect(const vec3& v, const vec3& n) {
 	return v - 2 * dot(v, n) * n;
 }
 
+//A metal with fuzz.
 class metal : public material {
 public:
 	metal(const vec3& a, float f) : albedo(a) {
@@ -54,9 +55,10 @@ public:
 		scattered = ray(rec.p, reflected + fuzz * random_in_unit_sphere());
 		attenuation = albedo;
 		return dot(scattered.direction(), rec.normal) > 0;
-
 	}
 
+	//Reflected light (I guess?)
 	vec3 albedo;
+	//Fuzz value from 0 (shiny) to 1 (fuzzy).
 	float fuzz;
 };
