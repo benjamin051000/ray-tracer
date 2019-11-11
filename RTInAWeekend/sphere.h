@@ -4,9 +4,11 @@
 struct sphere : public hittable {
 	sphere() {}
 
-	sphere(vec3 center, float radius) : center(center), radius(radius) {};
+	sphere(vec3 center, float radius, material* material) : center(center), radius(radius), material(material) {};
+	
 	vec3 center;
 	float radius;
+	material* material;
 
 	virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
 };
@@ -33,6 +35,7 @@ bool sphere::hit(const ray& r, float tmin, float tmax, hit_record& rec) const {
 			rec.t = t;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - center) / radius;
+			rec.material = material;
 			return true;
 		}
 
@@ -43,6 +46,7 @@ bool sphere::hit(const ray& r, float tmin, float tmax, hit_record& rec) const {
 			rec.t = t;
 			rec.p = r.point_at_parameter(rec.t);
 			rec.normal = (rec.p - center) / radius;
+			rec.material = material;
 			return true;
 		}
 	}
