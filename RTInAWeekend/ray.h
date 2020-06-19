@@ -3,11 +3,18 @@
 
 struct ray {
 	ray() {}
-	ray(const vec3 &a, const vec3 &b) { A = a, B = b; }
-	vec3 origin() const { return A; }
-	vec3 direction() const { return B; }
-	vec3 point_at_parameter(const float t) const { return A + t * B; }
 
-	//Points (vectors) that make up the ray. Points from A to B.
-	vec3 A, B;
+	ray(const point3& origin, const vec3& direction, double time = 0) : 
+		orig(origin), dir(direction), tm(time) {}
+
+	point3 origin() const { return orig; }
+	vec3 direction() const { return dir; }
+	point3 at(const float t) const { return orig + t * dir; }
+	double time() const { return tm; }
+
+
+	//Points (vectors) that make up the ray.
+	point3 orig;
+	vec3 dir;
+	double tm = 0;
 };
