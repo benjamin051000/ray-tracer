@@ -21,9 +21,6 @@
     <ClInclude Include="ray.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="hittable.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="sphere.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -34,6 +31,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="material.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hittable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moving_sphere.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
