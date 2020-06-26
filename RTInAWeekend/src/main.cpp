@@ -1,6 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <chrono>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#pragma warning(push, 3) // Removes warnings
+#include "stb_image_write.h"
+#pragma warning(pop)
 
 #include "common.h"
 
@@ -11,6 +17,8 @@
 #include "sphere.h"
 #include "moving_sphere.h"
 
+using std::chrono::steady_clock;
+using std::chrono::duration_cast;
 
 //Calculates the color of the pixel.
 vec3 ray_color(const ray &r, hittable &world, int depth) {
@@ -37,14 +45,14 @@ vec3 ray_color(const ray &r, hittable &world, int depth) {
 
 
 hittable_list random_scene();
-std::string task(const int x, const int y, hittable_list world, const int max_depth, camera cam, const unsigned int spp, int nx, int ny);
+//std::string task(const int x, const int y, hittable_list world, const int max_depth, camera cam, const unsigned int spp, int nx, int ny);
 
 
 int main() {
 	//Resolution
-	const int nx = 640, ny = 480;
+	const unsigned int nx = 640, ny = 480;
 	//Samples per pixel
-	const unsigned int spp = 10;
+	const unsigned int spp = 20;
 	// Maximum recursive depth for ray reflections.
 	const int max_depth = 50;
 	
@@ -57,56 +65,71 @@ int main() {
 		  aperture = 0;
 	camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
 
-	//Set up the output file
-	std::string filename = "render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".ppm";
-	std::ofstream out(filename);
-	out << "P3\n" << nx << " " << ny << "\n255\n";
+	// Array to hold pixel colors (x * y * num_pixels)
+	unsigned char* pixels = new unsigned char[nx * ny * 3];
+	unsigned int pixel_idx = 0;
 
 	/*----------Render the image----------*/
 	double percentage = 0;
 	const double percentChange = 100.0 / ny ;
 
-	// Enqueue work
-	for (int y = ny - 1; y >= 0; y--) {
+	auto start = steady_clock::now();
+
+	// Main loop
+	for (int y = ny-1; y >= 0; y--) {
+
+		auto row_start = steady_clock::now();
+
 		for (unsigned int x = 0; x < nx; x++) {
-			std::string output = task(x, y, world, max_depth, cam, spp, nx, ny);
-			out << output;
-		}	
+			color col(0, 0, 0);
+			//Repeat samples-per-pixel times
+			for (unsigned int s = 0; s < spp; s++) {
+
+				//Get a random ray in the pixel
+				float u = float(x + random_float()) / float(nx);
+				float  v = float(y + random_float()) / float(ny);
+
+				ray r = cam.get_ray(u, v);
+				col += ray_color(r, world, max_depth);
+			}
+
+			//Average the color value
+			col /= float(spp);
+			//Not sure why but square root the colors
+			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
+
+			//Write the rgb values
+			unsigned char ir = int(255 * col[0]), 
+						  ig = int(255 * col[1]), 
+						  ib = int(255 * col[2]);
+
+			pixels[pixel_idx++] = ir;
+			pixels[pixel_idx++] = ig;
+			pixels[pixel_idx++] = ib;
+		}
+
+		auto row_done = steady_clock::now();
 		percentage += percentChange;
-		std::cout << "Percent complete: " << percentage << "%" << std::endl;
+		auto elapsed_row = duration_cast<std::chrono::seconds>(row_done - row_start).count();
+		
+		std::cout << percentage << "% complete (Row time: " << elapsed_row << " s)\n";
+
+		/*auto est_time_remaining = (elapsed_row / percentage) * (100 - percentage);
+		std::cout << "\tEst. time remaining: " << est_time_remaining << " s" << std::endl;*/
 	}
-	out.close();
-}
-
-
-
-inline std::string task(const int x, const int y, hittable_list world, const int max_depth, camera cam, const unsigned int spp, int nx, int ny) {
-
-	color col(0, 0, 0);
-	//Repeat samples-per-pixel times
-	for (unsigned int s = 0; s < spp; s++) {
-
-		//Get a random ray in the pixel
-		float u = float(x + random_float()) / float(nx);
-		float  v = float(y + random_float()) / float(ny);
-
-		ray r = cam.get_ray(u, v);
-		col += ray_color(r, world, max_depth);
-	}
-
-	//Average the color value
-	col /= float(spp);
-	//Not sure why but square root the colors
-	col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
-
-	//Write the rgb values
-	std::string ir = std::to_string(255.99 * col[0]),
-				ig = std::to_string(255.99 * col[1]),
-				ib = std::to_string(255.99 * col[2]);
-
 	
-	return ir + " " + ig + " " + ib + "\n";
+
+	auto stop = steady_clock::now();
+
+	auto total_seconds = duration_cast<std::chrono::minutes>(stop - start).count();
+	std::cout << "Total render time: " << total_seconds << " min" << std::endl;
+
+	//Set up the output file
+	const std::string filename = "render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".jpg";
+	stbi_write_jpg(filename.c_str(), nx, ny, 3, pixels, 100);
+
 }
+
 
 hittable_list random_scene() {
 	hittable_list world;
@@ -129,9 +152,9 @@ hittable_list random_scene() {
 				if (choose_mat < 0.8) {  
 					// diffuse
 			
-					point3 center2 = center + vec3(0, random_float(0, 0.5f), 0);
+					//point3 center2 = center + vec3(0, random_float(0, 0.5f), 0);
 
-					world.add(make_shared<moving_sphere>(center, center2, 0, 1, 0.2, make_shared<lambertian>(
+					world.add(make_shared<sphere>(center, 0.2, make_shared<lambertian>(
 						color(random_float(), random_float(), random_float()))
 					));
 				}
