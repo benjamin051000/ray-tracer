@@ -48,5 +48,5 @@ private:
 	vec3 u, v, w;
 	point3 origin, lower_left_corner;
 	vec3 horizontal, vertical;
-	double time0, time1;
+	float time0, time1;
 };

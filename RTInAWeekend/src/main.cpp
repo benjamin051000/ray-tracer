@@ -4,9 +4,7 @@
 #include <chrono>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#pragma warning(push, 3) // Removes warnings
 #include "stb_image_write.h"
-#pragma warning(pop)
 
 #include "common.h"
 
@@ -45,8 +43,8 @@ vec3 ray_color(const ray &r, hittable &world, int depth) {
 
 
 hittable_list random_scene();
-//std::string task(const int x, const int y, hittable_list world, const int max_depth, camera cam, const unsigned int spp, int nx, int ny);
-
+hittable_list two_spheres();
+hittable_list two_perlin_spheres();
 
 int main() {
 	//Resolution
@@ -57,7 +55,7 @@ int main() {
 	const int max_depth = 50;
 	
 	//Initialize the objects in the scene
-	hittable_list world = random_scene();
+	hittable_list world = two_perlin_spheres();
 	
 	//Set up camera
 	vec3 lookfrom(13, 2, 3), lookat(0, 0, 0);
@@ -121,11 +119,11 @@ int main() {
 
 	auto stop = steady_clock::now();
 
-	auto total_seconds = duration_cast<std::chrono::minutes>(stop - start).count();
+	auto total_seconds = duration_cast<std::chrono::seconds>(stop - start).count();
 	std::cout << "Total render time: " << total_seconds << " min" << std::endl;
 
 	//Set up the output file
-	const std::string filename = "render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".jpg";
+	const std::string filename = "..\\render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".jpg";
 	stbi_write_jpg(filename.c_str(), nx, ny, 3, pixels, 100);
 
 }
@@ -137,7 +135,7 @@ hittable_list random_scene() {
 	world.add(make_shared<sphere>(
 		vec3(0, -1000, 0), 
 		1000, 
-		make_shared<lambertian>(color(.5f, .5f, .5f))
+		make_shared<lambertian>(make_shared<solid_color>(.5f, .5f, .5f))
 	));
 
 	// Creates 484 spheres of varying materials and positions.
@@ -155,7 +153,7 @@ hittable_list random_scene() {
 					//point3 center2 = center + vec3(0, random_float(0, 0.5f), 0);
 
 					world.add(make_shared<sphere>(center, 0.2, make_shared<lambertian>(
-						color(random_float(), random_float(), random_float()))
+						make_shared<solid_color>(random_float(), random_float(), random_float()))
 					));
 				}
 				else if (choose_mat < 0.95) { 
@@ -176,8 +174,30 @@ hittable_list random_scene() {
 	}
 
 	world.add(make_shared<sphere>(vec3(0, 1, 0), 1.0, make_shared<dielectric>(1.5f)));
-	world.add(make_shared<sphere>(vec3(-4, 1, 0), 1.0, make_shared<lambertian>(color(.5f, .5f, .5f))));
+	world.add(make_shared<sphere>(vec3(-4, 1, 0), 1.0, make_shared<lambertian>(make_shared<solid_color>(.5f, .5f, .5f))));
 	world.add(make_shared<sphere>(vec3(4, 1, 0), 1.0, make_shared<metal>(vec3(0.7f, 0.6f, 0.5f), 0.0f)));
 
 	return world;
+}
+
+hittable_list two_spheres() {
+	hittable_list objects;
+
+	auto checker = make_shared<checker_texture>(
+		make_shared <solid_color>(0.2, 0.3, 0.1),
+		make_shared<solid_color>(0.9, 0.9, 0.9)
+	);
+
+	objects.add(make_shared<sphere>(point3(0, -10, 0), 10, make_shared<lambertian>(checker)));
+	objects.add(make_shared<sphere>(point3(0, 10, 0), 10, make_shared<lambertian>(checker)));
+	return objects;
+}
+
+hittable_list two_perlin_spheres() {
+	hittable_list objects;
+
+	auto pertext = make_shared<noise_texture>(4);
+	objects.add(make_shared<sphere>(point3(0, -1000, 0), 1000, make_shared<lambertian>(pertext)));
+	objects.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(pertext)));
+	return objects;
 }
