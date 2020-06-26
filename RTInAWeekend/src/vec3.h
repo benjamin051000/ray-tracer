@@ -32,6 +32,14 @@ struct vec3 {
 	float length_squared() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
 	void make_unit_vector();
 
+	inline static vec3 random() {
+		return vec3(random_float(), random_float(), random_float());
+	}
+
+	inline static vec3 random(double min, double max) {
+		return vec3(random_float(min, max), random_float(min, max), random_float(min, max));
+	}
+
 	//Stores coordinates
 	float e[3];
 };

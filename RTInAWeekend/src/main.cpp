@@ -120,7 +120,7 @@ int main() {
 	auto stop = steady_clock::now();
 
 	auto total_seconds = duration_cast<std::chrono::seconds>(stop - start).count();
-	std::cout << "Total render time: " << total_seconds << " min" << std::endl;
+	std::cout << "Total render time: " << total_seconds << " sec" << std::endl;
 
 	//Set up the output file
 	const std::string filename = "..\\render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".jpg";

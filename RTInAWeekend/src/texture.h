@@ -44,10 +44,10 @@ public:
 	noise_texture(float sc) : scale(sc) {}
 
 	virtual color value(float u, float v, const point3& p) const {
-		return color(1, 1, 1) * noise.noise(scale * p);
+		return color(1, 1, 1) * 0.5 * (1.0 + noise.noise(scale * p));
 	}
 
 public:
 	perlin noise;
-	float scale;
+	float scale = 0.f;
 };
