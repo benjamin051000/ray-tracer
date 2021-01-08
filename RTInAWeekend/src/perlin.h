@@ -5,7 +5,7 @@ class perlin {
 public:
     perlin() {
         ranvec = new vec3[point_count];
-        for (int i = 0; i < point_count; ++i) {
+        for (int i = 0; i < point_count; i++) {
             ranvec[i] = unit_vector(vec3::random(-1, 1));
         }
 
@@ -59,9 +59,7 @@ public:
 private:
     static const int point_count = 256;
     vec3* ranvec;
-    int* perm_x;
-    int* perm_y;
-    int* perm_z;
+    int *perm_x, *perm_y, *perm_z;
 
     static int* perlin_generate_perm() {
         auto p = new int[point_count];
@@ -76,14 +74,14 @@ private:
 
     static void permute(int* p, int n) {
         for (int i = n - 1; i > 0; i--) {
-            int target = int(random_float(0, i)); // Used to be random_int
+            int target = random_int(0, i); // Used to be random_int
             int tmp = p[i];
             p[i] = p[target];
             p[target] = tmp;
         }
     }
 
-    inline static double perlin_interp(vec3 c[2][2][2], double u, double v, double w) {
+    static double perlin_interp(vec3 c[2][2][2], double u, double v, double w) {
         auto uu = u * u * (3 - 2 * u);
         auto vv = v * v * (3 - 2 * v);
         auto ww = w * w * (3 - 2 * w);
