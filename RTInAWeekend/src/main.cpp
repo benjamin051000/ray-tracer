@@ -69,51 +69,103 @@ hittable_list two_perlin_spheres();
 hittable_list earth();
 
 int main() {
-	//Resolution
-	const unsigned int nx = 640, ny = 480;
-	//Samples per pixel
-	const unsigned int spp = 10;
-	// Maximum recursive depth for ray reflections.
-	const int max_depth = 50;
-	
-	//Initialize the objects in the scene
-	hittable_list world = two_spheres();
-	
-	//Set up camera
-	vec3 lookfrom(13, 2, 3), lookat(0, 0, 0);
-	float dist_to_focus = (lookfrom - lookat).length(),
-		  aperture = 0;
-	camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
+	/* Output image options */
+	const unsigned int image_width = 640;
+	const double aspect_ratio = 16.0 / 9.0;
+	const int image_height = static_cast<int>(image_width / aspect_ratio);
 
+	const unsigned int spp = 1; //Samples per pixel
+	const int max_depth = 50; // Max recursive depth for ray reflections.
+	
+	/* Set up camera */
+	point3 lookfrom(13,2,3), lookat(0,0,0);
+	auto vfov = 40.0;
+	auto aperture = 0.0;
+
+
+	//Initialize the objects in the scene
+	hittable_list world;
+	
 	// Used in the ray_color function.
-	const color background(0, 0, 0);
+	color background(0.70, 0.80, 1.00);
+
+
+	/*----------Select Scene----------*/
+	switch (3) {
+	case 1:
+		std::cout << "Scene 1 selected." << std::endl;
+		world = random_scene();
+		//lookfrom = point3(13, 2, 3);
+		//lookat = point3(0, 0, 0);
+		vfov = 20.0;
+		aperture = 0.1;
+		break;
+
+	case 2:
+		std::cout << "Scene 2 selected." << std::endl;
+		world = two_spheres();
+		//lookfrom = point3(13, 2, 13);
+		//lookat = point3(0, 0, 0);
+		vfov = 20.0;
+		break;
+
+	case 3:
+		std::cout << "Scene 3 selected." << std::endl;
+		world = two_perlin_spheres();
+		//lookfrom = point3(13, 2, 3);
+		//lookat = point3(0, 0, 0);
+		vfov = 20.0;
+		break;
+
+	case 4:
+		std::cout << "Scene 4 selected." << std::endl;
+		world = earth();
+		//lookfrom = point3(13, 2, 3);
+		//lookat = point3(0, 0, 0);
+		vfov = 20.0;
+		break;
+
+	case 5:
+		std::cout << "Scene 5 selected." << std::endl;
+		background = color(0.0, 0.0, 0.0);
+		break;
+
+	default:
+		std::cout << "You must select a non-zero number.";
+		exit(1);
+	}
+
+	/*----------Set up Camera----------*/
+	vec3 vup(0, 1, 0);
+	auto dist_to_focus = 10.0;
+	camera cam(lookfrom, lookat, vup, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
-	unsigned char* pixels = new unsigned char[nx * ny * 3];
+	unsigned char* pixels = new unsigned char[image_width * image_height * 3];
 	unsigned int pixel_idx = 0;
 
 	/*----------Render the image----------*/
 	double percentage = 0;
-	const double percentChange = 100.0 / ny ;
+	const double percentChange = 100.0 / image_height ;
 
 	auto start = steady_clock::now();
 
 	// Main loop
-	for (int y = ny-1; y >= 0; y--) {
+	for (int y = image_height - 1; y >= 0; y--) {
 
 		auto row_start = steady_clock::now();
 
-		for (unsigned int x = 0; x < nx; x++) {
+		for (unsigned int x = 0; x < image_width; x++) {
 			color col(0, 0, 0);
 			//Repeat samples-per-pixel times
 			for (unsigned int s = 0; s < spp; s++) {
 
 				//Get a random ray in the pixel
-				float u = float(x + random_float()) / float(nx);
-				float  v = float(y + random_float()) / float(ny);
+				float u = float(x + random_float()) / float(image_width);
+				float  v = float(y + random_float()) / float(image_height);
 
 				ray r = cam.get_ray(u, v);
-				col += ray_color(r, world, max_depth);
+				col += ray_color(r, background, world, max_depth);
 			}
 
 			//Average the color value
@@ -148,11 +200,10 @@ int main() {
 	std::cout << "Total render time: " << total_seconds / 60 << " min" << total_seconds % 60 << " sec" << std::endl;
 
 	//Set up the output file
-	const std::string filename = "..\\render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".jpg";
-	stbi_write_jpg(filename.c_str(), nx, ny, 3, pixels, 100);
+	const std::string filename = "..\\render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(spp) + ".jpg";
+	stbi_write_jpg(filename.c_str(), image_width, image_height, 3, pixels, 100);
 
 }
-
 
 hittable_list random_scene() {
 	hittable_list world;
