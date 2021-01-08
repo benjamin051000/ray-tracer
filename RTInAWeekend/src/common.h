@@ -24,15 +24,6 @@ inline double clamp(double x, double min, double max) {
 	return x;
 }
 
-inline float random_float() {  // TODO deprecate in favor of random_double().
-	// Returns a random real in [0,1).
-	return rand() / (RAND_MAX + 1.f);
-}
-
-inline float random_float(float min, float max) {
-	return min + (max - min) * random_float();
-}
-
 inline double random_double() {
 	return rand() / (RAND_MAX + 1.0);
 }
@@ -42,7 +33,7 @@ inline double random_double(double min, double max) {
 }
 
 inline int random_int(int min, int max) {
-	return static_cast<int>(random_float(min, max + 1));
+	return static_cast<int>(random_double(min, max + 1));
 }
 
 

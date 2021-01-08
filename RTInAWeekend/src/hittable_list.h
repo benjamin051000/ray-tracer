@@ -1,6 +1,5 @@
 #pragma once
 #include "hittable.h"
-
 #include "common.h"
 
 #include <vector>
@@ -13,7 +12,7 @@ struct hittable_list : public hittable {
 	void clear() { objects.clear(); }
 	void add(shared_ptr<hittable> object) { objects.push_back(object); }
 	
-	virtual bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const;
+	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const override;
 
 	//bool bounding_box(float t0, float t1, aabb& output_box) const;
 
@@ -37,10 +36,10 @@ struct hittable_list : public hittable {
 //}
 
 
-bool hittable_list::hit(const ray& r, float tmin, float tmax, hit_record& rec) const {
+bool hittable_list::hit(const ray& r, double tmin, double tmax, hit_record& rec) const {
 	hit_record temp_rec;
 	bool hit_anything = false;
-	float closest_so_far = tmax;
+	double closest_so_far = tmax;
 
 	//For each hittable in the list
 	for (const auto& object : objects) {
@@ -48,11 +47,11 @@ bool hittable_list::hit(const ray& r, float tmin, float tmax, hit_record& rec) c
 		if (object->hit(r, tmin, closest_so_far, temp_rec)) {
 			hit_anything = true;
 			closest_so_far = temp_rec.t;
+			
+			//Copy record information over
+			rec = temp_rec;
 		}
 	}
-
-	//Copy record information over
-	rec = temp_rec;
 	
 	return hit_anything;
 }

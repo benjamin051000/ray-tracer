@@ -16,7 +16,7 @@ struct hit_record {
 	// Material of the object.
 	shared_ptr<material> material;
 
-	double u = 0, v = 0; // For texture mapping
+	double u = 0, v = 0; // For texture mapping // TODO deprecate?
 
 	bool front_face;
 
