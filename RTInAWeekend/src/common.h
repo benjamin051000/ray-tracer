@@ -14,11 +14,17 @@ const double PI = 3.1415926535897932385;
 
 
 // Common functions
-inline float deg_to_rad(float deg) {
-	return float(deg * PI / 180);
+inline double deg_to_rad(double deg) {
+	return deg * PI / 180;
 }
 
-inline float random_float() {
+inline double clamp(double x, double min, double max) {
+	if (x < min) return min;
+	if (x > max) return max;
+	return x;
+}
+
+inline float random_float() {  // TODO deprecate in favor of random_double().
 	// Returns a random real in [0,1).
 	return rand() / (RAND_MAX + 1.f);
 }
@@ -27,11 +33,19 @@ inline float random_float(float min, float max) {
 	return min + (max - min) * random_float();
 }
 
-inline float clamp(float x, float min, float max) {
-	if (x < min) return min;
-	if (x > max) return max;
-	return x;
+inline double random_double() {
+	return rand() / (RAND_MAX + 1.0);
 }
+
+inline double random_double(double min, double max) {
+	return min + (max - min) * random_double();
+}
+
+inline int random_int(int min, int max) {
+	return static_cast<int>(random_float(min, max + 1));
+}
+
+
 
 // Common headers
 #include "ray.h"
