@@ -161,8 +161,8 @@ int main() {
 			for (unsigned int s = 0; s < spp; s++) {
 
 				//Get a random ray in the pixel
-				float u = float(x + random_float()) / float(image_width);
-				float  v = float(y + random_float()) / float(image_height);
+				float u = float(x + random_double()) / float(image_width);
+				float  v = float(y + random_double()) / float(image_height);
 
 				ray r = cam.get_ray(u, v);
 				col += ray_color(r, background, world, max_depth);
@@ -218,28 +218,28 @@ hittable_list random_scene() {
 	for (int a = -11; a < 11; a++) {
 		for (int b = -11; b < 11; b++) {
 
-			float choose_mat = random_float();
-			point3 center(a + 0.9 * random_float(), 0.2, b + 0.9 * random_float());
+			float choose_mat = random_double();
+			point3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
 
 			if ((center - vec3(4, 0.2, 0)).length() > 0.9) {
 				
 				if (choose_mat < 0.8) {  
 					// diffuse
 			
-					//point3 center2 = center + vec3(0, random_float(0, 0.5f), 0);
+					//point3 center2 = center + vec3(0, random_double(0, 0.5f), 0);
 
 					world.add(make_shared<sphere>(center, 0.2, make_shared<lambertian>(
-						make_shared<solid_color>(random_float(), random_float(), random_float()))
+						make_shared<solid_color>(random_double(), random_double(), random_double()))
 					));
 				}
 				else if (choose_mat < 0.95) { 
 					// metal
 					
 					world.add(make_shared<sphere>(center, 0.2,
-						make_shared<metal>(vec3(0.5f * (1 + random_float()),
-							0.5f * (1 + random_float()),
-							0.5f * (1 + random_float())),
-							0.5f * random_float())));
+						make_shared<metal>(vec3(0.5f * (1 + random_double()),
+							0.5f * (1 + random_double()),
+							0.5f * (1 + random_double())),
+							0.5f * random_double())));
 				}
 				else {  
 					// glass
