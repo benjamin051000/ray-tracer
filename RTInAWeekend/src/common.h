@@ -51,10 +51,3 @@ inline int random_int(int min, int max) {
 #include "ray.h"
 //#include "vec3.h" // Included in ray.h
 
-vec3 random_in_unit_sphere() {
-	vec3 p;
-	do {
-		p = 2.0 * vec3(random_float(), random_float(), random_float()) - vec3(1, 1, 1);
-	} while (p.length_squared() >= 1.0);
-	return p;
-}
