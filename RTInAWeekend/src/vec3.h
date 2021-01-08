@@ -32,6 +32,11 @@ struct vec3 {
 	double length_squared() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
 	void make_unit_vector();
 
+	bool near_zero() const {
+		const auto s = 1e-8;
+		return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+	}
+
 	inline static vec3 random() {
 		return vec3(random_double(), random_double(), random_double());
 	}
@@ -154,7 +159,7 @@ inline std::ostream& operator<<(std::ostream& output, vec3& t) {
 vec3 random_in_unit_disk() {
 	vec3 p;
 	do
-		p = vec3(random_float(-1, 1), random_float(-1, 1), 0);
+		p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
 	while (p.length_squared() >= 1);
 	
 	return p;
@@ -167,4 +172,8 @@ vec3 random_in_unit_sphere() {
 	while (p.length_squared() >= 1);
 
 	return p;
+}
+
+inline vec3 random_unit_vector() {
+	return unit_vector(random_in_unit_sphere());
 }
