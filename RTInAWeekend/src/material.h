@@ -3,31 +3,38 @@
 #include  "texture.h"
 
 
-//ABC
+// ABC
 class material {
 public:
 	virtual bool scatter(
 		const ray& r_in, 
 		const hit_record& rec, 
-		vec3& attenuation, 
+		color& attenuation, 
 		ray& scattered) const = 0;
 
-	virtual color emitted(float u, float v, const point3& p) const {
+	virtual color emitted(double u, double v, const point3& p) const {
 		return color(0, 0, 0);
 	}
 };
 
 
-//A diffuse (matte) material.
+// A diffuse (matte) material.
 class lambertian : public material {
 public:
 	lambertian() {}
 
 	lambertian(shared_ptr<texture> a) : albedo(a) {}
 
-	virtual bool scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const {
+	virtual bool scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered
+	) const override {
 
-		vec3 scatter_direction = rec.normal + random_in_unit_sphere();
+		vec3 scatter_direction = rec.normal + random_unit_vector();
+
+		// Catch degenerate scatter direction
+		if (scatter_direction.near_zero()) {
+			scatter_direction = rec.normal;
+		}
+
 		scattered = ray(rec.p, scatter_direction, r_in.time());
 		attenuation = albedo->value(rec.u, rec.v, rec.p);
 		
@@ -39,85 +46,69 @@ private:
 };
 
 
-//TODO: Put this in metal class? If not used by anything else
-vec3 reflect(const vec3& v, const vec3& n) {
-	return v - 2 * dot(v, n) * n;
-}
-
-
-//A metal with fuzz.
+// A metal with fuzz.
 class metal : public material {
 public:
-	metal(const vec3& a, float f) : albedo(a) {
-		fuzz = f < 1 ? f : 1;
-	}
-	virtual bool scatter(const ray& r_in, const hit_record& rec,
-		vec3& attenuation, ray& scattered) const {
+	metal(const vec3& a, double f) : albedo(a), fuzz(f < 1 ? f : 1) {}
+
+	virtual bool scatter(
+		const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered
+	) const override {
+
 		vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
-		scattered = ray(rec.p, reflected + fuzz * random_in_unit_sphere());
+		scattered = ray(rec.p, reflected + fuzz * random_in_unit_sphere(), r_in.time());
 		attenuation = albedo;
+		
 		return dot(scattered.direction(), rec.normal) > 0;
 	}
 
-	//Reflected light (I guess?)
-	vec3 albedo;
-	//Fuzz value from 0 (shiny) to 1 (fuzzy).
-	float fuzz;
+	// Reflected light (I guess?)
+	color albedo;
+	// Fuzz value from 0 (shiny) to 1 (fuzzy).
+	double fuzz;
 };
-
-
-vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
-	float cos_theta = dot(-uv, n);
-	vec3 r_out_parallel = etai_over_etat * (uv + cos_theta * n);
-	vec3 r_out_perp = -sqrt(1. - r_out_parallel.length_squared()) * n;
-	
-	return r_out_parallel + r_out_perp;
-}
-
-
-//Approximation for varying reflectivity with angle.
-float schlick(float cosine, float ref_idx) {
-	float r0 = (1 - ref_idx) / (1 + ref_idx);
-	r0 *= r0;
-	return r0 + (1 - r0) * pow(1 - cosine, 5);
-}
 
 
 class dielectric : public material {
 public:
-	dielectric(float ri) : ref_idx(ri) {}
+	dielectric(double index_of_refraction) : ref_idx(index_of_refraction) {}
 
-	virtual bool scatter(const ray& r_in, const hit_record& rec,
-		color& attenuation, ray& scattered) const 
-	{
-		attenuation = color(1, 1, 1);
-		float etai_over_etat = (rec.front_face) ? (1.f / ref_idx) : ref_idx;
+	virtual bool scatter(
+		const ray& r_in, const hit_record& rec,	color& attenuation, ray& scattered
+	) const override {
+		attenuation = color(1.0, 1.0, 1.0);
+		
+		double refraction_ratio = rec.front_face ? (1.0 / ref_idx) : ref_idx;
 
 		vec3 unit_direction = unit_vector(r_in.direction());
 
-		float cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
-		float sin_theta = sqrt(1 - pow(cos_theta, 2));
+		double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
+		double sin_theta = sqrt(1.0 - cos_theta * cos_theta));
 
-		if (etai_over_etat * sin_theta > 1) {
-			vec3 reflected = reflect(unit_direction, rec.normal);
-			scattered = ray(rec.p, reflected);
-			return true;
-		}
+		bool cannot_refract = refraction_ratio * sin_theta > 1.0;
 
-		float reflect_prob = schlick(cos_theta, etai_over_etat);
-		if (random_float() < reflect_prob) {
-			vec3 reflected = reflect(unit_direction, rec.normal);
-			scattered = ray(rec.p, reflected);
-			return true;
-		}
+		vec3 direction; // Called direction in the book
 
-		vec3 refracted = refract(unit_direction, rec.normal, etai_over_etat);
-		scattered = ray(rec.p, refracted);
+		if (cannot_refract || reflectance(cos_theta, refraction_ratio) > random_double())
+			direction = reflect(unit_direction, rec.normal);	
+		else
+			direction = refract(unit_direction, rec.normal, refraction_ratio);
+
+		scattered = ray(rec.p, direction);
 		return true;
 	}
 
-	//Refractive index
-	float ref_idx;
+	// Refractive index
+	double ref_idx;
+
+private:
+	//Approximation for varying reflectivity with angle.
+	// Uses Schlick's Approximation for reflectance.
+	static double reflectance(float cosine, float ref_idx) {
+		auto r0 = (1 - ref_idx) / (1 + ref_idx);
+		r0 *= r0;
+		return r0 + (1 - r0) * pow(1 - cosine, 5);
+	}
 };
 
 class diffuse_light : public material {
@@ -125,11 +116,12 @@ public:
 	diffuse_light(shared_ptr<texture> a) : emit(a) {}
 
 	virtual bool scatter(
-		const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const {
+		const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
+	) const override {
 		return false;
 	}
 
-	virtual color emitted(float u, float v, const point3& p) const {
+	virtual color emitted(double u, double v, const point3& p) const override {
 		return emit->value(u, v, p);
 	}
 
