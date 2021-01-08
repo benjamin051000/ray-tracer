@@ -5,18 +5,21 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include <iostream>
+
 class texture {
 public:
-	virtual color value(float u, float v, const point3& p) const = 0;
+	virtual color value(double u, double v, const point3& p) const = 0;
 };
 
 class solid_color : public texture {
 public:
 	solid_color() {}
 	solid_color(color c) : color_value(c) {}
-	solid_color(float r, float g, float b) : solid_color(color(r, g, b)) {}
 
-	virtual color value(float u, float v, const vec3& p) const {
+	solid_color(double r, double g, double b) : solid_color(color(r, g, b)) {}
+
+	virtual color value(double u, double v, const vec3& p) const {
 		return color_value;
 	}
 
@@ -27,9 +30,14 @@ private:
 class checker_texture : public texture {
 public:
 	checker_texture() {}
-	checker_texture(shared_ptr<texture> t0, shared_ptr<texture> t1) : even(t0), odd(t1) {}
 
-	virtual color value(float u, float v, const point3& p) const {
+	checker_texture(shared_ptr<texture> _even, shared_ptr<texture> _odd) 
+        : even(_even), odd(_odd) {}
+
+    checker_texture(color c1, color c2)
+        : even(make_shared<solid_color>(c1)), odd(make_shared<solid_color>(c2)) {}
+
+	virtual color value(double u, double v, const vec3& p) const {
 		auto sines = sin(10 * p.x()) * sin(10 * p.y()) * sin(10 * p.z());
 		if (sines < 0)
 			return odd->value(u, v, p);
@@ -44,9 +52,9 @@ public:
 class noise_texture : public texture {
 public:
 	noise_texture() {}
-	noise_texture(float sc) : scale(sc) {}
+	noise_texture(double sc) : scale(sc) {}
 
-	virtual color value(float u, float v, const point3& p) const {
+	virtual color value(double u, double v, const vec3& p) const {
 		//return color(1, 1, 1) * 0.5 * (1.0 + noise.noise(scale * p));
 		//return color(1, 1, 1) * noise.turb(p);
 		return color(1, 1, 1) * 0.5 * (1 + sin(scale * p.z() + 10 * noise.turb(p)));
@@ -54,7 +62,7 @@ public:
 
 public:
 	perlin noise;
-	float scale = 0.f;
+	double scale;
 };
 
 class image_texture : public texture {
@@ -79,20 +87,21 @@ public:
     }
 
     ~image_texture() {
-        delete data;
+        // Deletes the data.
+        STBI_FREE(data);
     }
 
-    virtual color value(float u, float v, const vec3& p) const {
+    virtual color value(double u, double v, const vec3& p) const override {
         // If we have no texture data, then return solid cyan as a debugging aid.
         if (data == nullptr)
             return color(0, 1, 1);
 
         // Clamp input texture coordinates to [0,1] x [1,0]
-        u = clamp(u, 0.f, 1.f);
-        v = 1.f - clamp(v, 0.f, 1.f);  // Flip V to image coordinates
+        u = clamp(u, 0.0, 1.0);
+        v = 1.0 - clamp(v, 0.0, 1.0);  // Flip V to image coordinates
 
-        auto i = static_cast<int>(u * width);
-        auto j = static_cast<int>(v * height);
+        int i = static_cast<int>(u * width);
+        int j = static_cast<int>(v * height);
 
         // Clamp integer mapping, since actual coordinates should be less than 1.0
         if (i >= width)  i = width - 1;
