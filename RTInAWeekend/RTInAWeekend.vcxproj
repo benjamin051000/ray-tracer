@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\aarect.h" />
+    <ClInclude Include="src\material.h" />
     <ClInclude Include="src\perlin.h" />
     <ClInclude Include="src\aabb.h" />
     <ClInclude Include="src\bvh.h" />
@@ -26,10 +28,10 @@
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\hittable.h" />
     <ClInclude Include="src\hittable_list.h" />
-    <ClInclude Include="src\material.h" />
     <ClInclude Include="src\moving_sphere.h" />
     <ClInclude Include="src\ray.h" />
     <ClInclude Include="src\sphere.h" />
+    <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\stb_image_write.h" />
     <ClInclude Include="src\texture.h" />
     <ClInclude Include="src\vec3.h" />
@@ -107,7 +109,8 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed>
+      </FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

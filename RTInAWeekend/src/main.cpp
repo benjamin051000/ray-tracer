@@ -19,49 +19,74 @@ using std::chrono::steady_clock;
 using std::chrono::duration_cast;
 
 //Calculates the color of the pixel.
-vec3 ray_color(const ray &r, hittable &world, int depth) {
+color ray_color(const ray &r, const color& background, hittable &world, int depth) {
 	hit_record rec;
 	
 	// If we've exceeded the ray bounce limit, no more light is gathered.
-	if (depth <= 0) return color(0.f, 0.f, 0.f);
+	if (depth <= 0) return color(0, 0, 0);
 
-	if (world.hit(r, 0.001, infinity, rec)) {
-		ray scattered;
-		color attenuation;
+	// If the ray hits nothing, return background color.
+	if (!world.hit(r, 0.001, infinity, rec))
+		return background;
 
-		if (rec.material->scatter(r, rec, attenuation, scattered))
-			return attenuation * ray_color(scattered, world, depth - 1);
-		
-		return vec3(0, 0, 0);
-	}
-	
-	//What is this block for? If the ray doesn't hit anything in the world, isn't the color just white?
-	vec3 unit_direction = unit_vector(r.direction());
-	float t = 0.5f * (unit_direction.y() + 1.f);
-	return (1 - t) * color(1, 1, 1) + t * color(0.5f, 0.7f, 1);
+	ray scattered;
+	color attenuation;
+	color emitted = rec.material->emitted(rec.u, rec.v, rec.p);
+
+	if (!rec.material->scatter(r, rec, attenuation, scattered))
+		return emitted;
+
+	return emitted + attenuation * ray_color(scattered, background, world, depth - 1);
 }
+
+//Calculates the color of the pixel.
+//vec3 ray_color(const ray& r, hittable& world, int depth) {
+//	hit_record rec;
+//
+//	// If we've exceeded the ray bounce limit, no more light is gathered.
+//	if (depth <= 0) return color(0.f, 0.f, 0.f);
+//
+//	if (world.hit(r, 0.001, infinity, rec)) {
+//		ray scattered;
+//		color attenuation;
+//
+//		if (rec.material->scatter(r, rec, attenuation, scattered))
+//			return attenuation * ray_color(scattered, world, depth - 1);
+//
+//		return vec3(0, 0, 0);
+//	}
+//
+//	//What is this block for? If the ray doesn't hit anything in the world, isn't the color just white?
+//	vec3 unit_direction = unit_vector(r.direction());
+//	float t = 0.5f * (unit_direction.y() + 1.f);
+//	return (1 - t) * color(1, 1, 1) + t * color(0.5f, 0.7f, 1);
+//}
 
 
 hittable_list random_scene();
 hittable_list two_spheres();
 hittable_list two_perlin_spheres();
+hittable_list earth();
 
 int main() {
 	//Resolution
 	const unsigned int nx = 640, ny = 480;
 	//Samples per pixel
-	const unsigned int spp = 20;
+	const unsigned int spp = 10;
 	// Maximum recursive depth for ray reflections.
 	const int max_depth = 50;
 	
 	//Initialize the objects in the scene
-	hittable_list world = two_perlin_spheres();
+	hittable_list world = two_spheres();
 	
 	//Set up camera
 	vec3 lookfrom(13, 2, 3), lookat(0, 0, 0);
 	float dist_to_focus = (lookfrom - lookat).length(),
 		  aperture = 0;
 	camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx) / float(ny), aperture, dist_to_focus);
+
+	// Used in the ray_color function.
+	const color background(0, 0, 0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
 	unsigned char* pixels = new unsigned char[nx * ny * 3];
@@ -97,8 +122,8 @@ int main() {
 			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
 
 			//Write the rgb values
-			unsigned char ir = int(255 * col[0]), 
-						  ig = int(255 * col[1]), 
+			unsigned char ir = int(255 * col[0]),
+						  ig = int(255 * col[1]),
 						  ib = int(255 * col[2]);
 
 			pixels[pixel_idx++] = ir;
@@ -120,7 +145,7 @@ int main() {
 	auto stop = steady_clock::now();
 
 	auto total_seconds = duration_cast<std::chrono::seconds>(stop - start).count();
-	std::cout << "Total render time: " << total_seconds << " sec" << std::endl;
+	std::cout << "Total render time: " << total_seconds / 60 << " min" << total_seconds % 60 << " sec" << std::endl;
 
 	//Set up the output file
 	const std::string filename = "..\\render_" + std::to_string(nx) + "_" + std::to_string(ny) + "_" + std::to_string(spp) + ".jpg";
@@ -200,4 +225,12 @@ hittable_list two_perlin_spheres() {
 	objects.add(make_shared<sphere>(point3(0, -1000, 0), 1000, make_shared<lambertian>(pertext)));
 	objects.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(pertext)));
 	return objects;
+}
+
+hittable_list earth() {
+	auto earth_texture = make_shared<image_texture>("..\\earthmap.jpg");
+	auto earth_surface = make_shared<lambertian>(earth_texture);
+	auto globe = make_shared<sphere>(point3(0, 0, 0), 2, earth_surface);
+
+	return hittable_list(globe);
 }
