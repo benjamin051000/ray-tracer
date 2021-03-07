@@ -40,28 +40,27 @@ color ray_color(const ray &r, const color& background, hittable &world, int dept
 }
 
 //Calculates the color of the pixel.
-//vec3 ray_color(const ray& r, hittable& world, int depth) {
+//vec3 ray_color(const ray& r, const color& background, hittable& world, int depth) {
 //	hit_record rec;
 //
 //	// If we've exceeded the ray bounce limit, no more light is gathered.
-//	if (depth <= 0) return color(0.f, 0.f, 0.f);
+//	if (depth <= 0) return color(0, 0, 0);
 //
 //	if (world.hit(r, 0.001, infinity, rec)) {
 //		ray scattered;
 //		color attenuation;
 //
 //		if (rec.material->scatter(r, rec, attenuation, scattered))
-//			return attenuation * ray_color(scattered, world, depth - 1);
+//			return attenuation * ray_color(scattered, background, world, depth - 1);
 //
 //		return vec3(0, 0, 0);
 //	}
 //
 //	//What is this block for? If the ray doesn't hit anything in the world, isn't the color just white?
 //	vec3 unit_direction = unit_vector(r.direction());
-//	float t = 0.5f * (unit_direction.y() + 1.f);
-//	return (1 - t) * color(1, 1, 1) + t * color(0.5f, 0.7f, 1);
+//	float t = 0.5 * (unit_direction.y() + 1);
+//	return (1 - t) * color(1, 1, 1) + t * color(0.5, 0.7, 1);
 //}
-
 
 hittable_list random_scene();
 hittable_list two_spheres();
@@ -208,10 +207,11 @@ int main() {
 hittable_list random_scene() {
 	hittable_list world;
 
+	// Creates the "ground" (a large sphere beneath the rest).
 	world.add(make_shared<sphere>(
 		vec3(0, -1000, 0), 
 		1000, 
-		make_shared<lambertian>(make_shared<solid_color>(.5f, .5f, .5f))
+		make_shared<lambertian>(make_shared<solid_color>(0.5, 0.5, 0.5))
 	));
 
 	// Creates 484 spheres of varying materials and positions.

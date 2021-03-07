@@ -6,7 +6,8 @@
 struct vec3 {
 	//Constructors
 	vec3() : e{ 0,0,0 } {}
-	vec3(double e0, double e1, double e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
+	//vec3(double e0, double e1, double e2) { e[0] = e0; e[1] = e1; e[2] = e2; }
+	vec3(double e0, double e1, double e2) : e{ e0, e1, e2 } {}
 
 	//Coord getters
 	double x() const { return e[0]; }
@@ -67,7 +68,7 @@ inline vec3 operator*(double t, const vec3& v) {
 	return vec3(t * v[0], t * v[1], t * v[2]);
 }
 
-inline vec3 operator*(const vec3& v, const float t) {
+inline vec3 operator*(const vec3& v, double t) {
 	return t * v;
 }
 
@@ -142,13 +143,13 @@ inline vec3 cross(const vec3& u, const vec3& v) {
 	);
 }
 
-inline void vec3::make_unit_vector() {
-	// This was deprecated in new RTIAW example code.
-	float k = 1.f / sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
-	e[0] *= k;
-	e[1] *= k;
-	e[2] *= k;
-}
+//inline void vec3::make_unit_vector() {
+//	// This was deprecated in new RTIAW example code.
+//	float k = 1.f / sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
+//	e[0] *= k;
+//	e[1] *= k;
+//	e[2] *= k;
+//}
 
 //Output
 inline std::ostream& operator<<(std::ostream& output, vec3& t) {
@@ -157,21 +158,19 @@ inline std::ostream& operator<<(std::ostream& output, vec3& t) {
 
 /*----------Random Vector Generators----------*/
 vec3 random_in_unit_disk() {
-	vec3 p;
-	do
-		p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
-	while (p.length_squared() >= 1);
-	
-	return p;
+	while (true) {
+		vec3 p(random_double(-1, 1), random_double(-1, 1), 0);
+		
+		if (p.length_squared() < 1)  return p;
+	}
 }
 
 vec3 random_in_unit_sphere() {
-	vec3 p;
-	do
-		p = vec3::random();
-	while (p.length_squared() >= 1);
+	while (true) {
+		vec3 p = vec3::random(-1, 1);
 
-	return p;
+		if (p.length_squared() < 1) return p;
+	}
 }
 
 inline vec3 random_unit_vector() {
