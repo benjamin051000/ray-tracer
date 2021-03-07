@@ -137,7 +137,7 @@ int main() {
 	/*----------Set up Camera----------*/
 	vec3 vup(0, 1, 0);
 	auto dist_to_focus = 10.0;
-	camera cam(lookfrom, lookat, vup, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+	camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
 	unsigned char* pixels = new unsigned char[image_width * image_height * 3];
