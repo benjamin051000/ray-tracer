@@ -23,15 +23,15 @@ private:
 		v = theta / PI;
 	}
 
-	//virtual bool bounding_box(float t0, float t1, aabb& output_box) const;
+	virtual bool bounding_box(double t0, double t1, aabb& output_box) const override;
 };
 
-//bool sphere::bounding_box(float t0, float t1, aabb& output_box) const {
-//	output_box = aabb(
-//		center - vec3(radius, radius, radius),
-//		center + vec3(radius, radius, radius));
-//	return true;
-//}
+bool sphere::bounding_box(double t0, double t1, aabb& output_box) const {
+	output_box = aabb(
+		center - vec3(radius, radius, radius),
+		center + vec3(radius, radius, radius));
+	return true;
+}
 
 bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const {
 	vec3 oc = r.origin() - center;

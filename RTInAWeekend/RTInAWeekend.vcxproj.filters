@@ -17,8 +17,11 @@
     <ClInclude Include="src\material.h" />
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\aarect.h" />
+    <ClInclude Include="src\box.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\aarect.cpp" />
+    <ClCompile Include="src\aabb.cpp" />
   </ItemGroup>
 </Project>

@@ -14,6 +14,9 @@
 
 #include "sphere.h"
 #include "moving_sphere.h"
+#include "aarect.h"
+#include "box.h"
+//#include "constant_medium.h"
 
 using std::chrono::steady_clock;
 using std::chrono::duration_cast;
@@ -39,41 +42,21 @@ color ray_color(const ray &r, const color& background, hittable &world, int dept
 	return emitted + attenuation * ray_color(scattered, background, world, depth - 1);
 }
 
-//Calculates the color of the pixel.
-//vec3 ray_color(const ray& r, const color& background, hittable& world, int depth) {
-//	hit_record rec;
-//
-//	// If we've exceeded the ray bounce limit, no more light is gathered.
-//	if (depth <= 0) return color(0, 0, 0);
-//
-//	if (world.hit(r, 0.001, infinity, rec)) {
-//		ray scattered;
-//		color attenuation;
-//
-//		if (rec.material->scatter(r, rec, attenuation, scattered))
-//			return attenuation * ray_color(scattered, background, world, depth - 1);
-//
-//		return vec3(0, 0, 0);
-//	}
-//
-//	//What is this block for? If the ray doesn't hit anything in the world, isn't the color just white?
-//	vec3 unit_direction = unit_vector(r.direction());
-//	float t = 0.5 * (unit_direction.y() + 1);
-//	return (1 - t) * color(1, 1, 1) + t * color(0.5, 0.7, 1);
-//}
-
 hittable_list random_scene();
 hittable_list two_spheres();
 hittable_list two_perlin_spheres();
 hittable_list earth();
+hittable_list simple_light();
+hittable_list cornell_box();
 
 int main() {
 	/* Output image options */
-	const unsigned int image_width = 640;
-	const double aspect_ratio = 16.0 / 9.0;
-	const int image_height = static_cast<int>(image_width / aspect_ratio);
+	unsigned int image_width = 1920;
+	double aspect_ratio = 16.0 / 9.0;
+	unsigned int image_height = static_cast<int>(image_width / aspect_ratio);
+	//const unsigned int image_height = 720;
 
-	const unsigned int spp = 1; //Samples per pixel
+	unsigned int spp = 100; //Samples per pixel
 	const int max_depth = 50; // Max recursive depth for ray reflections.
 	
 	/* Set up camera */
@@ -90,7 +73,7 @@ int main() {
 
 
 	/*----------Select Scene----------*/
-	switch (3) {
+	switch (6) {
 	case 1:
 		std::cout << "Scene 1 selected." << std::endl;
 		world = random_scene();
@@ -126,7 +109,23 @@ int main() {
 
 	case 5:
 		std::cout << "Scene 5 selected." << std::endl;
+		world = simple_light();
 		background = color(0.0, 0.0, 0.0);
+		lookfrom = point3(26, 3, 26);
+		lookat = point3(0, 2, 0);
+		vfov = 20;
+		break;
+
+	case 6:
+		world = cornell_box();
+		aspect_ratio = 1;
+		image_width = 600;
+		image_height = 600;
+		background = color(0, 0, 0);
+		spp = 200;
+		lookfrom = point3(278, 278, -800);
+		lookat = point3(278, 278, 0);
+		vfov = 40;
 		break;
 
 	default:
@@ -155,7 +154,7 @@ int main() {
 		auto row_start = steady_clock::now();
 
 		for (unsigned int x = 0; x < image_width; x++) {
-			color col(0, 0, 0);
+			color pixel_color(0, 0, 0);
 			//Repeat samples-per-pixel times
 			for (unsigned int s = 0; s < spp; s++) {
 
@@ -164,18 +163,18 @@ int main() {
 				float  v = float(y + random_double()) / float(image_height);
 
 				ray r = cam.get_ray(u, v);
-				col += ray_color(r, background, world, max_depth);
+				pixel_color += ray_color(r, background, world, max_depth);
 			}
 
 			//Average the color value
-			col /= float(spp);
+			pixel_color /= float(spp);
 			//Not sure why but square root the colors
-			col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
+			pixel_color = vec3(sqrt(pixel_color[0]), sqrt(pixel_color[1]), sqrt(pixel_color[2]));
 
 			//Write the rgb values
-			unsigned char ir = int(255 * col[0]),
-						  ig = int(255 * col[1]),
-						  ib = int(255 * col[2]);
+			unsigned char ir = int(255 * pixel_color[0]),
+						  ig = int(255 * pixel_color[1]),
+						  ib = int(255 * pixel_color[2]);
 
 			pixels[pixel_idx++] = ir;
 			pixels[pixel_idx++] = ig;
@@ -196,7 +195,7 @@ int main() {
 	auto stop = steady_clock::now();
 
 	auto total_seconds = duration_cast<std::chrono::seconds>(stop - start).count();
-	std::cout << "Total render time: " << total_seconds / 60 << " min" << total_seconds % 60 << " sec" << std::endl;
+	std::cout << "Total render time: " << total_seconds / 60 << " min " << total_seconds % 60 << " sec" << std::endl;
 
 	//Set up the output file
 	const std::string filename = "..\\render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(spp) + ".jpg";
@@ -279,9 +278,53 @@ hittable_list two_perlin_spheres() {
 }
 
 hittable_list earth() {
-	auto earth_texture = make_shared<image_texture>("..\\earthmap.jpg");
+	auto earth_texture = make_shared<image_texture>("..\\assets\\earthmap.jpg");
 	auto earth_surface = make_shared<lambertian>(earth_texture);
 	auto globe = make_shared<sphere>(point3(0, 0, 0), 2, earth_surface);
 
 	return hittable_list(globe);
+}
+
+hittable_list simple_light() {
+	hittable_list objects;
+
+	auto pertext = make_shared<noise_texture>(4);
+	objects.add(make_shared<sphere>(point3(0, -1000, 0), 1000, make_shared<lambertian>(pertext)));
+	objects.add(make_shared<sphere>(point3(0, 2, 0), 2, make_shared<lambertian>(pertext)));
+
+	auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
+	objects.add(make_shared<xy_rect>(3, 5, 1, 3, -2, difflight));
+
+	return objects;
+}
+
+hittable_list cornell_box() {
+	hittable_list objects;
+
+	auto red = make_shared<lambertian>(color(.65, .05, .05));
+	auto white = make_shared<lambertian>(color(.73, .73, .73));
+	auto green = make_shared<lambertian>(color(.12, .45, .15));
+	auto light = make_shared<diffuse_light>(color(15, 15, 15));
+
+	// Add walls and light
+	objects.add(make_shared<yz_rect>(0, 555, 0, 555, 555, green));
+	objects.add(make_shared<yz_rect>(0, 555, 0, 555, 0, red));
+	objects.add(make_shared<xz_rect>(0, 555, 0, 555, 0, white));
+	objects.add(make_shared<xz_rect>(0, 555, 0, 555, 555, white));
+	objects.add(make_shared<xy_rect>(0, 555, 0, 555, 555, white));
+
+	objects.add(make_shared<xz_rect>(213, 343, 227, 332, 554, light));
+	
+	// Add two boxes to the scene
+	shared_ptr<hittable> box1 = make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
+	box1 = make_shared<rotate_y>(box1, 15);
+	box1 = make_shared<translate>(box1, vec3(265, 0, 295));
+	objects.add(box1);
+
+	shared_ptr<hittable> box2 = make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
+	box2 = make_shared<rotate_y>(box2, -18);
+	box2 = make_shared<translate>(box2, vec3(130, 0, 65));
+	objects.add(box2);
+
+	return objects;
 }
