@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="src\aarect.h" />
     <ClInclude Include="src\box.h" />
+    <ClInclude Include="src\constant_medium.h" />
     <ClInclude Include="src\material.h" />
     <ClInclude Include="src\perlin.h" />
     <ClInclude Include="src\aabb.h" />

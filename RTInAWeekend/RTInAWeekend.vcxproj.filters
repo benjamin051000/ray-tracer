@@ -18,6 +18,7 @@
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="src\aarect.h" />
     <ClInclude Include="src\box.h" />
+    <ClInclude Include="src\constant_medium.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />

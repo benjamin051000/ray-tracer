@@ -111,6 +111,7 @@ private:
 	}
 };
 
+
 class diffuse_light : public material {
 public:
 	diffuse_light(shared_ptr<texture> a) : emit(a) {}
@@ -129,6 +130,7 @@ public:
 public:
 	shared_ptr<texture> emit;
 };
+
 
 class isotropic : public material {
 public:

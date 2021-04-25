@@ -11,6 +11,17 @@ public:
 
 	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const override;
 
+	virtual bool bounding_box(double _time0, double _time1, aabb& output_box) const override {
+		aabb box0(
+			center(_time0) - vec3(radius, radius, radius),
+			center(_time0) + vec3(radius, radius, radius));
+		aabb box1(
+			center(_time1) - vec3(radius, radius, radius),
+			center(_time1) + vec3(radius, radius, radius));
+		output_box = surrounding_box(box0, box1);
+		return true;
+	}
+
 	point3 center(double time) const;
 
 private:
