@@ -54,10 +54,10 @@ hittable_list final_scene();
 
 int main() {
 	/* Output image options */
-	unsigned int image_width = 1920;
-	double aspect_ratio = 16.0 / 9.0;
-	unsigned int image_height = static_cast<int>(image_width / aspect_ratio);
-	//const unsigned int image_height = 720;
+	unsigned int image_width = 640;
+	double aspect_ratio = 4.0 / 3.0; //16.0 / 9.0;
+	//unsigned int image_height = static_cast<int>(image_width / aspect_ratio);
+	unsigned int image_height = 480;
 
 	unsigned int spp = 100; //Samples per pixel
 	const int max_depth = 50; // Max recursive depth for ray reflections.
@@ -76,7 +76,7 @@ int main() {
 
 
 	/*----------Select Scene----------*/
-	switch (8) {
+	switch (6) {
 	case 1:
 		std::cout << "Scene 1 selected." << std::endl;
 		world = random_scene();
@@ -122,10 +122,10 @@ int main() {
 	case 6:
 		world = cornell_box();
 		aspect_ratio = 1;
-		image_width = 600;
-		image_height = 600;
+		image_width = 800;
+		image_height = 800;
 		background = color(0, 0, 0);
-		spp = 200;
+		spp = 400;
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
 		vfov = 40;
@@ -145,8 +145,9 @@ int main() {
 	case 8:
 		world = final_scene();
 		aspect_ratio = 1.0;
-		image_width = 800;
-		spp = 10;
+		image_width = 100;
+		image_height = 100;
+		spp = 1;
 		background = color(0, 0, 0);
 		lookfrom = point3(478, 278, -600);
 		lookat = point3(278, 278, 0);
@@ -164,8 +165,8 @@ int main() {
 	camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
-	unsigned char* pixels = new unsigned char[image_width * image_height * 3];
-	unsigned int pixel_idx = 0;
+	unsigned int IMG_NUM_PIXELS = image_width * image_height * 3U;
+	unsigned char* pixels = new unsigned char[IMG_NUM_PIXELS];
 
 	/*----------Render the image----------*/
 	double percentage = 0;
@@ -201,9 +202,10 @@ int main() {
 						  ig = int(255 * pixel_color[1]),
 						  ib = int(255 * pixel_color[2]);
 
-			pixels[pixel_idx++] = ir;
-			pixels[pixel_idx++] = ig;
-			pixels[pixel_idx++] = ib;
+			auto index = 3*image_width * (image_height - 1 - y) + 3 * x;
+			pixels[index] = ir;
+			pixels[index + 1] = ig;
+			pixels[index + 2] = ib;
 		}
 
 		auto row_done = steady_clock::now();
