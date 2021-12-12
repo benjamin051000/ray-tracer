@@ -45,7 +45,9 @@
     <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\hittable_list.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ray.cpp" />
     <ClCompile Include="src\scenes.cpp" />
+    <ClCompile Include="src\vec3.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
