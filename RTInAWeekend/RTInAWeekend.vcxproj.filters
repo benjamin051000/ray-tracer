@@ -19,10 +19,13 @@
     <ClInclude Include="src\aarect.h" />
     <ClInclude Include="src\box.h" />
     <ClInclude Include="src\constant_medium.h" />
+    <ClInclude Include="src\scenes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\aarect.cpp" />
     <ClCompile Include="src\aabb.cpp" />
+    <ClCompile Include="src\scenes.cpp" />
+    <ClCompile Include="src\hittable_list.cpp" />
   </ItemGroup>
 </Project>
