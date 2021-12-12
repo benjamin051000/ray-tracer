@@ -94,67 +94,64 @@ void run(
 
 int main() {
 	/* Output image options */
-	unsigned int image_width = 640;
-	double aspect_ratio = 4.0 / 3.0; //16.0 / 9.0;
-	//unsigned int image_height = static_cast<int>(image_width / aspect_ratio);
-	unsigned int image_height = 480;
+	auto image_width = 640;
+	auto aspect_ratio = 4.0 / 3.0;
+	//auto image_height = static_cast<int>(image_width / aspect_ratio);
+	auto image_height = 480;
 
-	unsigned int spp = 100; //Samples per pixel
-	const int max_depth = 50; // Max recursive depth for ray reflections.
+	const auto SPP = 100; // Samples per pixel
+	const auto MAX_DEPTH = 50; // Max recursive depth for ray reflections.
 	
+    /* Number of worker threads to render the scene. */
+	const unsigned NUM_THREADS = 8;
+	const Scene SCENE = Scene::RANDOM_SCENE;
+	
+	//////////////////////////////////////
+	// Default values for each scene (may be overridden by scene switch stmt)
+	//////////////////////////////////////
 	/* Set up camera */
-	point3 lookfrom(13,2,3), lookat(0,0,0);
+	point3 lookfrom, lookat;
 	auto vfov = 40.0;
 	auto aperture = 0.0;
-
-	/* Number of worker threads to render the scene. */
-	const unsigned num_threads = 8;
-	const Scene scene = Scene::RANDOM_SCENE;
 
 	//Initialize the objects in the scene
 	hittable_list world;
 	
-	// Used in the ray_color function.
+	// Color of the "skybox"/background (when ray hits nothing)
 	color background(0.70, 0.80, 1.00);
 
-
 	/*----------Select Scene----------*/
-	switch (scene) {
+	switch (SCENE) {
 	case Scene::RANDOM_SCENE:
-		std::cout << "Scene 1 selected." << std::endl;
 		world = random_scene();
-		//lookfrom = point3(13, 2, 3);
-		//lookat = point3(0, 0, 0);
+		lookfrom = point3(13, 2, 3);
+		lookat = point3(0, 0, 0);
 		vfov = 20.0;
 		aperture = 0.1;
 		break;
 
 	case Scene::TWO_SPHERES:
-		std::cout << "Scene 2 selected." << std::endl;
 		world = two_spheres();
-		//lookfrom = point3(13, 2, 13);
-		//lookat = point3(0, 0, 0);
+		lookfrom = point3(13, 2, 13);
+		lookat = point3(0, 0, 0);
 		vfov = 20.0;
 		break;
 
 	case Scene::TWO_PERLIN_SPHERES:
-		std::cout << "Scene 3 selected." << std::endl;
 		world = two_perlin_spheres();
-		//lookfrom = point3(13, 2, 3);
-		//lookat = point3(0, 0, 0);
+		lookfrom = point3(13, 2, 3);
+		lookat = point3(0, 0, 0);
 		vfov = 20.0;
 		break;
 
 	case Scene::EARTH:
-		std::cout << "Scene 4 selected." << std::endl;
 		world = earth();
-		//lookfrom = point3(13, 2, 3);
-		//lookat = point3(0, 0, 0);
+		lookfrom = point3(13, 2, 3);
+		lookat = point3(0, 0, 0);
 		vfov = 20.0;
 		break;
 
 	case Scene::SIMPLE_LIGHT:
-		std::cout << "Scene 5 selected." << std::endl;
 		world = simple_light();
 		background = color(0.0, 0.0, 0.0);
 		lookfrom = point3(26, 3, 26);
@@ -168,7 +165,6 @@ int main() {
 		image_width = 800;
 		image_height = 800;
 		background = color(0, 0, 0);
-		spp = 5000;
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
 		vfov = 40;
@@ -179,7 +175,6 @@ int main() {
 		aspect_ratio = 1;
 		image_width = 600;
 		image_height = 600;
-		spp = 200;
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
 		vfov = 40;
@@ -190,7 +185,6 @@ int main() {
 		aspect_ratio = 4.0/3.0;
 		image_width = 640;
 		image_height = 480;
-		spp = 50;
 		background = color(0, 0, 0);
 		lookfrom = point3(478, 278, -600);
 		lookat = point3(278, 278, 0);
@@ -211,11 +205,11 @@ int main() {
 	const unsigned int IMG_NUM_PIXELS = image_width * image_height * 3U;
 	unsigned char* pixels = new unsigned char[IMG_NUM_PIXELS];
 
-	std::vector<std::thread> threads(num_threads);
+	std::vector<std::thread> threads(NUM_THREADS);
 
-	auto width_incr = image_width / num_threads;
+	auto width_incr = image_width / NUM_THREADS;
 
-	for (unsigned int i = 0; i < num_threads; i++) {
+	for (unsigned int i = 0; i < NUM_THREADS; i++) {
 		const auto start = i * width_incr;
 		const auto end = (i + 1) * width_incr;
 
@@ -229,17 +223,17 @@ int main() {
 				image_height,
 				image_width,
 				image_height,
-				spp,
+				SPP,
 				cam,
 				background,
 				world,
-				max_depth,
+				MAX_DEPTH,
 				pixels
 			);
 		});
 	}
 
-	std::cout << num_threads << " threads started." << std::endl;
+	std::cout << NUM_THREADS << " threads started." << std::endl;
 	
 	// Wait for threads to finish.
 	for (std::thread& t : threads) {
@@ -249,7 +243,7 @@ int main() {
 	std::cout << "Threads finished!" << std::endl;
 
 	//Set up the output file
-	const std::string filename = "..\\render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(spp) + ".jpg";
+	const std::string filename = "..\\render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(SPP) + ".jpg";
 	stbi_write_jpg(filename.c_str(), image_width, image_height, 3, pixels, 100);
 	std::cout << "Done." << std::endl;
 
