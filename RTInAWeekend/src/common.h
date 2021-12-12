@@ -9,32 +9,20 @@ using std::shared_ptr;
 using std::make_shared;
 using std::sqrt;
 
-const float infinity = std::numeric_limits<float>::infinity();
-const double PI = 3.1415926535897932385;
+const auto infinity = std::numeric_limits<float>::infinity();
+const auto PI = 3.1415926535897932385;
 
 
 // Common functions
-inline double deg_to_rad(double deg) {
-	return deg * PI / 180;
-}
+double deg_to_rad(double deg);
 
-inline double clamp(double x, double min, double max) {
-	if (x < min) return min;
-	if (x > max) return max;
-	return x;
-}
+double clamp(double x, double min, double max);
 
-inline double random_double() {
-	return rand() / (RAND_MAX + 1.0);
-}
+double random_double();
 
-inline double random_double(double min, double max) {
-	return min + (max - min) * random_double();
-}
+double random_double(double min, double max);
 
-inline int random_int(int min, int max) {
-	return static_cast<int>(random_double(min, max + 1));
-}
+int random_int(int min, int max);
 
 
 

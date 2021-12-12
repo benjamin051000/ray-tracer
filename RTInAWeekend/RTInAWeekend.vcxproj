@@ -42,6 +42,7 @@
   <ItemGroup>
     <ClCompile Include="src\aabb.cpp" />
     <ClCompile Include="src\aarect.cpp" />
+    <ClCompile Include="src\common.cpp" />
     <ClCompile Include="src\hittable_list.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenes.cpp" />
