@@ -146,7 +146,7 @@ public:
     shared_ptr<hittable> ptr;
     double sin_theta;
     double cos_theta;
-    bool hasbox;
+    bool hasbox = false;
     aabb bbox;
 };
 
