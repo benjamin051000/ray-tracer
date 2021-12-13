@@ -9,7 +9,7 @@ public:
 	point3 min() const { return _min; }
 	point3 max() const { return _max; }
 
-	bool hit(const ray& r, float tmin, float tmax) const;
+	bool hit(const ray& r, double tmin, double tmax) const;
 
 	point3 _min, _max;
 };

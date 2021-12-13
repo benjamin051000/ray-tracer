@@ -62,7 +62,7 @@ public:
 
 public:
 	perlin noise;
-	double scale;
+	double scale = 0;
 };
 
 class image_texture : public texture {
@@ -100,8 +100,8 @@ public:
         u = clamp(u, 0.0, 1.0);
         v = 1.0 - clamp(v, 0.0, 1.0);  // Flip V to image coordinates
 
-        int i = static_cast<int>(u * width);
-        int j = static_cast<int>(v * height);
+        auto i = static_cast<int>(u * width);
+        auto j = static_cast<int>(v * height);
 
         // Clamp integer mapping, since actual coordinates should be less than 1.0
         if (i >= width)  i = width - 1;
@@ -114,7 +114,7 @@ public:
     }
 
 private:
-    unsigned char* data;
-    int width, height;
-    int bytes_per_scanline;
+    unsigned char* data = nullptr;
+    int width = 0, height = 0;
+    int bytes_per_scanline = 0;
 };

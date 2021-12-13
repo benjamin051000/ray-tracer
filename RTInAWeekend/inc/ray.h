@@ -8,7 +8,7 @@ struct ray {
 
 	point3 origin() const;
 	vec3 direction() const;
-	point3 at(const float t) const;
+	point3 at(const double t) const;
 	double time() const;
 
 	//Points (vectors) that make up the ray.

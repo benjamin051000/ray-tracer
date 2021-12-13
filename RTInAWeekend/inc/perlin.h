@@ -91,9 +91,9 @@ private:
             for (int j = 0; j < 2; j++)
                 for (int k = 0; k < 2; k++) {
                     vec3 weight_v(u - i, v - j, w - k);
-                    accum += (i * uu + (1 - i) * (1 - uu)) *
-                        (j * vv + (1 - j) * (1 - vv)) *
-                        (k * ww + (1 - k) * (1 - ww)) * dot(c[i][j][k], weight_v);
+                    accum += (i * uu + (1.0 - i) * (1 - uu)) *
+                        (j * vv + (1.0 - j) * (1 - vv)) *
+                        (k * ww + (1.0 - k) * (1 - ww)) * dot(c[i][j][k], weight_v);
                 }
 
         return accum;

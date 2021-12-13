@@ -1,7 +1,7 @@
 #include "aabb.h"
 
 
-bool aabb::hit(const ray& r, float tmin, float tmax) const {
+bool aabb::hit(const ray& r, double tmin, double tmax) const {
 	for (int a = 0; a < 3; a++) {
 		auto invD = 1.0f / r.direction()[a];
 		auto t0 = (min()[a] - r.origin()[a]) * invD;

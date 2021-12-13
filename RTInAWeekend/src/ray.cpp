@@ -9,6 +9,6 @@ point3 ray::origin() const { return orig; }
 
 vec3 ray::direction() const { return dir; }
 
-point3 ray::at(const float t) const { return orig + t * dir; }
+point3 ray::at(const double t) const { return orig + t * dir; }
 
 double ray::time() const { return tm; }

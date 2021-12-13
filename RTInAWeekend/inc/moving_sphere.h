@@ -39,11 +39,11 @@ bool moving_sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec)
 	in understanding the math, so I will leave the comments in for now.*/
 	vec3 oc = r.origin() - center(r.time());
 
-	const float a = dot(r.direction(), r.direction()),
+	const auto a = dot(r.direction(), r.direction()),
 		half_b = dot(oc, r.direction()), // Represents half of b, since it's normally x2.
 		c = oc.length_squared() - radius * radius;
 	
-	const float discriminant = half_b * half_b - /* 4 * */ a * c;
+	const auto discriminant = half_b * half_b - /* 4 * */ a * c;
 
 	auto sqrtd = sqrt(discriminant);
 

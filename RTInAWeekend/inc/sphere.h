@@ -12,7 +12,7 @@ public:
 
 private:
 	point3 center;
-	double radius;
+	double radius = 0;
 	shared_ptr<material> material;
 	
 	static void get_sphere_uv(const point3& p, double& u, double& v) {
@@ -40,15 +40,15 @@ bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const 
 	/*2's and 4's have been commented out, as they cancel out
 	in the grand scheme of things. However, they are helpful
 	in understanding the math, so I will leave the comments in for now.*/
-	const float a = r.direction().length_squared(),
+	const auto a = r.direction().length_squared(),
 		half_b = dot(oc, r.direction()), // Represents half of b, since it's normally *2.
 		c = oc.length_squared() - radius * radius;
 
-	const float discriminant = half_b * half_b - /* 4 * */ a * c;
+	const auto discriminant = half_b * half_b - /* 4 * */ a * c;
 	if (discriminant < 0) return false;
 
 
-	float sqrtd = sqrt(discriminant);
+	auto sqrtd = sqrt(discriminant);
 
 	// Find the nearest root that lies in the acceptable range.
 	auto root = (-half_b - sqrtd) / a;
