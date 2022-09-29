@@ -94,17 +94,17 @@ void run(
 
 int main() {
 	/* Output image options */
-	auto image_width = 640;
+	auto image_width = 1200;
 	auto aspect_ratio = 4.0 / 3.0;
 	//auto image_height = static_cast<int>(image_width / aspect_ratio);
-	auto image_height = 480;
+	auto image_height = 900;
 
-	const auto SPP = 100; // Samples per pixel
+	const auto SPP = 1000; // Samples per pixel
 	const auto MAX_DEPTH = 50; // Max recursive depth for ray reflections.
 	
     /* Number of worker threads to render the scene. */
-	const unsigned NUM_THREADS = 8;
-	const Scene SCENE = Scene::RANDOM_SCENE;
+	const unsigned NUM_THREADS = 16;
+	const Scene SCENE = Scene::CORNELL_BOX;
 	
 	//////////////////////////////////////
 	// Default values for each scene (may be overridden by scene switch stmt)
@@ -243,7 +243,7 @@ int main() {
 	std::cout << "Threads finished!" << std::endl;
 
 	//Set up the output file
-	const std::string filename = "..\\render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(SPP) + ".jpg";
+	const std::string filename = "render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(SPP) + ".jpg";
 	stbi_write_jpg(filename.c_str(), image_width, image_height, 3, pixels, 100);
 	std::cout << "Done." << std::endl;
 

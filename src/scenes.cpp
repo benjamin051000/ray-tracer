@@ -21,9 +21,9 @@ color ray_color(const ray& r, const color& background, hittable& world, int dept
 
 	ray scattered;
 	color attenuation;
-	color emitted = rec.material->emitted(rec.u, rec.v, rec.p);
+	color emitted = rec.mp->emitted(rec.u, rec.v, rec.p);
 
-	if (!rec.material->scatter(r, rec, attenuation, scattered))
+	if (!rec.mp->scatter(r, rec, attenuation, scattered))
 		return emitted;
 
 	return emitted + attenuation * ray_color(scattered, background, world, depth - 1);

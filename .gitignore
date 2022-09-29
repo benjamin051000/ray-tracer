@@ -343,3 +343,10 @@ healthchecksdb
 images/
 *.png
 *.jpg
+
+
+# Added by me
+# executable
+./raytracer
+
+

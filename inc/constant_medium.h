@@ -63,7 +63,7 @@ public:
 
 		rec.normal = vec3(1, 0, 0);  // arbitrary
 		rec.front_face = true;     // also arbitrary
-		rec.material = phase_function;
+		rec.mp = phase_function;
 
 		return true;
 	}

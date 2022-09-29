@@ -17,7 +17,7 @@ bool xy_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
     rec.t = t;
     auto outward_normal = vec3(0, 0, 1);
     rec.set_face_normal(r, outward_normal);
-    rec.material = material;
+    rec.mp = mp;
     rec.p = r.at(t);
     return true;
 }
@@ -35,7 +35,7 @@ bool xz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
     rec.t = t;
     auto outward_normal = vec3(0, 1, 0);
     rec.set_face_normal(r, outward_normal);
-    rec.material = mp;
+    rec.mp = mp;
     rec.p = r.at(t);
     return true;
 }
@@ -53,7 +53,7 @@ bool yz_rect::hit(const ray& r, double t_min, double t_max, hit_record& rec) con
     rec.t = t;
     auto outward_normal = vec3(1, 0, 0);
     rec.set_face_normal(r, outward_normal);
-    rec.material = mp;
+    rec.mp = mp;
     rec.p = r.at(t);
     return true;
 }

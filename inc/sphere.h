@@ -6,14 +6,14 @@ class sphere : public hittable {
 public:
 	sphere() {}
 	sphere(point3 center, double radius, shared_ptr<material> material)
-		: center(center), radius(radius), material(material) {}
+		: center(center), radius(radius), mp(material) {}
 
 	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const override;
 
 private:
 	point3 center;
 	double radius = 0;
-	shared_ptr<material> material;
+	shared_ptr<material> mp;
 	
 	static void get_sphere_uv(const point3& p, double& u, double& v) {
 		auto theta = acos(-p.y());
@@ -64,7 +64,7 @@ bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const 
 	vec3 outward_normal = (rec.p - center) / radius;
 	rec.set_face_normal(r, outward_normal);
 	get_sphere_uv(outward_normal, rec.u, rec.v);
-	rec.material = material;
+	rec.mp = mp;
 
 	return true;
 }

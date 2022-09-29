@@ -2,9 +2,11 @@
 EXEC := raytracer
 CFLAGS := -O3 -Wall -Wextra -Wunused -Wshadow -pedantic -Wwrite-strings -Wunused-value
 ARGS := ""
+CC := "clang++"
 
 BUILD_DIR := ./build
 SRC_DIRS := ./src
+INCLUDE_DIRS := ./inc
 
 # Find C files to compile
 # Note the single quotes around the * expressions. Make will incorrectly expand these otherwise.
@@ -16,12 +18,12 @@ OBJS := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 
 # The final build step.
 $(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(CC) -I $(INCLUDE_DIRS) $(CFLAGS) $(OBJS) -o $@
 
 # Build step for C source
 $(BUILD_DIR)/%.o: $(SRCS)
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) -I $(INCLUDE_DIRS) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean run
 clean:
@@ -29,4 +31,7 @@ clean:
 
 run: $(EXEC)
 	./$(EXEC) $(ARGS)
+
+setup:
+	bear -- make
 

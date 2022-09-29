@@ -6,7 +6,7 @@
 class xy_rect : public hittable {
 public:
 	xy_rect() {}
-	xy_rect(double _x0, double _x1, double _y0, double _y1, double _k, shared_ptr<material> mat) : x0(_x0), x1(_x1), y0(_y0), y1(_y1), k(_k), material(mat) {}
+	xy_rect(double _x0, double _x1, double _y0, double _y1, double _k, shared_ptr<material> mat) : x0(_x0), x1(_x1), y0(_y0), y1(_y1), k(_k), mp(mat) {}
 
 	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
 
@@ -17,7 +17,7 @@ public:
         return true;
     }
 
-	shared_ptr<material> material;
+	shared_ptr<material> mp;
 	double x0 = 0, x1 = 0, y0 = 0, y1 = 0, k = 0;
 };
 

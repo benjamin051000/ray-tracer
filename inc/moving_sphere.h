@@ -7,7 +7,7 @@ public:
 
 	moving_sphere() {}
 	moving_sphere(point3 cen0, point3 cen1, double t0, double t1, float r, shared_ptr<material> m)
-		: center0(cen0), center1(cen1), time0(t0), time1(t1), radius(r), material(m) {}
+		: center0(cen0), center1(cen1), time0(t0), time1(t1), radius(r), mp(m) {}
 
 	virtual bool hit(const ray& r, double tmin, double tmax, hit_record& rec) const override;
 
@@ -28,7 +28,7 @@ private:
 	point3 center0, center1;
 	double time0 = 0, time1 = 0;
 	double radius = 0;
-	shared_ptr<material> material;
+	shared_ptr<material> mp;
 };
 
 bool moving_sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const
@@ -59,7 +59,7 @@ bool moving_sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec)
 	rec.p = r.at(rec.t);
 	vec3 outward_normal = (rec.p - center(r.time())) / radius;
 	rec.set_face_normal(r, outward_normal);
-	rec.material = material;
+	rec.mp = mp;
 
 	return true;
 }

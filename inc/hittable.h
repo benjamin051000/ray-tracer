@@ -14,7 +14,7 @@ struct hit_record {
 	point3 p;
 	vec3 normal;
 	// Material of the object.
-	shared_ptr<material> material;
+	shared_ptr<material> mp;
 
 	double u = 0, v = 0; // For texture mapping // TODO deprecate?
 
