@@ -6,3 +6,7 @@ Based on the [Ray Tracing in One Weekend](https://raytracing.github.io/) series,
 1200x900, 1000 samples per pixel
 Render time @ 12 threads: 1hr 16min
 
+![Simple Light](renders/render_1200_900_1000.jpg)
+1200x900, 1000 spp
+Render time @ 16 threads: 27:56 min
+

@@ -104,7 +104,7 @@ int main() {
 	
     /* Number of worker threads to render the scene. */
 	const unsigned NUM_THREADS = 16;
-	const Scene SCENE = Scene::CORNELL_BOX;
+	const Scene SCENE = Scene::SIMPLE_LIGHT;
 	
 	//////////////////////////////////////
 	// Default values for each scene (may be overridden by scene switch stmt)
