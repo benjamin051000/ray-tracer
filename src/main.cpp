@@ -1,9 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string_view>
 #include <thread>
 #include <vector>
 #include <chrono>
+#include <unordered_map>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -91,20 +93,80 @@ void run(
 
 }
 
+struct options {
+    Scene scene;
+    unsigned int width, height, spp, jobs;
+};
 
-int main() {
+options parse_args(int argc, char** argv) {
+    const int NUM_REQUIRED_ARGS = 5;
+
+    if (argc < NUM_REQUIRED_ARGS) {
+        std::cout << 
+            "Usage:\n"
+            "\traytracer <scene number> <image width> <image height> <samples per pixel> <num jobs>\n\n"
+            "Scene numbers:\n"
+            "1. Random scene (Cover of book 1)\n"
+            "2. Two spheres\n"
+            "3. Two perlin spheres\n"
+            "4. Earth\n"
+            "5. Simple light\n"
+            "6. Cornell box\n"
+            "7. Cornell smoke\n"
+            "8. Final scene (Cover of book 2)\n";
+
+        exit(EXIT_FAILURE);
+    }
+
+    const std::vector<std::string> args(argv + 1, argv + argc);
+
+    for(const auto& arg: args) {
+        std::cout << '"' << arg << '"' << "\n";
+    }
+
+    options opts;
+    // First arg is the scene
+    const unsigned num = std::stoi(args.at(0));
+
+    const std::unordered_map<int, Scene> scenes = {
+        {1, Scene::RANDOM_SCENE},
+        {2, Scene::TWO_SPHERES},
+        {3, Scene::TWO_PERLIN_SPHERES},
+        {4, Scene::EARTH},
+        {5, Scene::SIMPLE_LIGHT},
+        {6, Scene::CORNELL_BOX},
+        {7, Scene::CORNELL_SMOKE},
+        {8, Scene::FINAL_SCENE},
+    };
+
+    opts.scene = scenes.at(num);
+
+    // Image width, height
+    opts.width = std::stoi(args.at(1));
+    opts.height = std::stoi(args.at(2));
+    // spp
+    opts.spp = std::stoi(args.at(3));
+    // num jobs
+    opts.jobs = std::stoi(args.at(4));
+
+    return opts;
+}
+
+int main(int argc, char** argv) {
+
+    auto opts = parse_args(argc, argv);
 	/* Output image options */
-	auto image_width = 1200;
+	// auto opts.width = 1200;
 	auto aspect_ratio = 4.0 / 3.0;
-	//auto image_height = static_cast<int>(image_width / aspect_ratio);
-	auto image_height = 900;
+	//auto opts.height = static_cast<int>(opts.width / aspect_ratio);
+	// auto opts.height = 900;
 
-	const auto SPP = 1000; // Samples per pixel
+	// const auto opts.spp = 50; // Samples per pixel
 	const auto MAX_DEPTH = 50; // Max recursive depth for ray reflections.
 	
     /* Number of worker threads to render the scene. */
-	const unsigned NUM_THREADS = 16;
-	const Scene SCENE = Scene::SIMPLE_LIGHT;
+	// const unsigned opts.jobs = 16;
+	// const Scene SCENE = Scene::FINAL_SCENE;
 	
 	//////////////////////////////////////
 	// Default values for each scene (may be overridden by scene switch stmt)
@@ -121,7 +183,7 @@ int main() {
 	color background(0.70, 0.80, 1.00);
 
 	/*----------Select Scene----------*/
-	switch (SCENE) {
+	switch (opts.scene) {
 	case Scene::RANDOM_SCENE:
 		world = random_scene();
 		lookfrom = point3(13, 2, 3);
@@ -162,8 +224,8 @@ int main() {
 	case Scene::CORNELL_BOX:
 		world = cornell_box();
 		aspect_ratio = 1;
-		image_width = 800;
-		image_height = 800;
+		opts.width = 800;
+		opts.height = 800;
 		background = color(0, 0, 0);
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
@@ -173,8 +235,8 @@ int main() {
 	case Scene::CORNELL_SMOKE:
 		world = cornell_smoke();
 		aspect_ratio = 1;
-		image_width = 600;
-		image_height = 600;
+		opts.width = 600;
+		opts.height = 600;
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
 		vfov = 40;
@@ -183,8 +245,8 @@ int main() {
 	case Scene::FINAL_SCENE:
 		world = final_scene();
 		aspect_ratio = 4.0/3.0;
-		image_width = 640;
-		image_height = 480;
+		opts.width = 640;
+		opts.height = 480;
 		background = color(0, 0, 0);
 		lookfrom = point3(478, 278, -600);
 		lookat = point3(278, 278, 0);
@@ -202,14 +264,14 @@ int main() {
 	camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
-	const unsigned int IMG_NUM_PIXELS = image_width * image_height * 3U;
+	const unsigned int IMG_NUM_PIXELS = opts.width * opts.height * 3U;
 	unsigned char* pixels = new unsigned char[IMG_NUM_PIXELS];
 
-	std::vector<std::thread> threads(NUM_THREADS);
+	std::vector<std::thread> threads(opts.jobs);
 
-	auto width_incr = image_width / NUM_THREADS;
+	auto width_incr = opts.width / opts.jobs;
 
-	for (unsigned int i = 0; i < NUM_THREADS; i++) {
+	for (unsigned int i = 0; i < opts.jobs; i++) {
 		const auto start = i * width_incr;
 		const auto end = (i + 1) * width_incr;
 
@@ -220,10 +282,10 @@ int main() {
 				start,
 				0,
 				end,
-				image_height,
-				image_width,
-				image_height,
-				SPP,
+				opts.height,
+				opts.width,
+				opts.height,
+				opts.spp,
 				cam,
 				background,
 				world,
@@ -233,7 +295,7 @@ int main() {
 		});
 	}
 
-	std::cout << NUM_THREADS << " threads started." << std::endl;
+	std::cout << opts.jobs << " threads started." << std::endl;
 	
 	// Wait for threads to finish.
 	for (std::thread& t : threads) {
@@ -243,8 +305,8 @@ int main() {
 	std::cout << "Threads finished!" << std::endl;
 
 	//Set up the output file
-	const std::string filename = "render_" + std::to_string(image_width) + "_" + std::to_string(image_height) + "_" + std::to_string(SPP) + ".jpg";
-	stbi_write_jpg(filename.c_str(), image_width, image_height, 3, pixels, 100);
+	const std::string filename = "render_" + std::to_string(opts.width) + "_" + std::to_string(opts.height) + "_" + std::to_string(opts.spp) + ".jpg";
+	stbi_write_jpg(filename.c_str(), opts.width, opts.height, 3, pixels, 100);
 	std::cout << "Done." << std::endl;
 
 	delete[] pixels;  // Free memory

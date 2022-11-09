@@ -1,6 +1,6 @@
 # Mostly from makefiletutorial.com
 EXEC := raytracer
-CFLAGS := -O3 -Wall -Wextra -Wunused -Wshadow -pedantic -Wwrite-strings -Wunused-value
+CFLAGS := --std=c++17 -O3 -Wall -Wextra -Wunused -Wshadow -pedantic -Wwrite-strings -Wunused-value
 ARGS := ""
 CC := "clang++"
 
