@@ -1,8 +1,8 @@
 # Mostly from makefiletutorial.com
 EXEC := raytracer
-CFLAGS := --std=c++17 -O3 -Wall -Wextra -Wunused -Wshadow -pedantic -Wwrite-strings -Wunused-value
+CFLAGS := --std=c++17 -O3 -Wall -Wextra -Wunused -Wshadow=compatible-local -pedantic -Wwrite-strings -Wunused-value
 ARGS := ""
-CC := "clang++"
+CC := "g++"
 
 BUILD_DIR := ./build
 SRC_DIRS := ./src
