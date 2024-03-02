@@ -1,5 +1,5 @@
 #include "aabb.h"
-
+#include <cmath>
 
 bool aabb::hit(const ray& r, double tmin, double tmax) const {
 	for (int a = 0; a < 3; a++) {

@@ -24,3 +24,4 @@ hittable_list cornell_smoke();
 hittable_list final_scene();
 
 color ray_color(const ray& r, const color& background, hittable& world, int depth);
+

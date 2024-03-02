@@ -12,7 +12,7 @@ public:
 		color& attenuation, 
 		ray& scattered) const = 0;
 
-	virtual color emitted(double u, double v, const point3& p) const {
+	virtual color emitted([[maybe_unused]] double u, [[maybe_unused]] double v, [[maybe_unused]] const point3& p) const {
 		return color(0, 0, 0);
 	}
 };
@@ -118,7 +118,7 @@ public:
 	diffuse_light(color c) : emit(make_shared<solid_color>(c)) {}
 
 	virtual bool scatter(
-		const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
+		[[maybe_unused]] const ray& r_in, [[maybe_unused]] const hit_record& rec, [[maybe_unused]] color& attenuation, [[maybe_unused]] ray& scattered
 	) const override {
 		return false;
 	}

@@ -12,3 +12,4 @@ vec3 ray::direction() const { return dir; }
 point3 ray::at(const double t) const { return orig + t * dir; }
 
 double ray::time() const { return tm; }
+

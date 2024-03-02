@@ -58,3 +58,4 @@ private:
 	vec3 horizontal, vertical;
 	double time0, time1;
 };
+

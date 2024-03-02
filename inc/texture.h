@@ -19,7 +19,7 @@ public:
 
 	solid_color(double r, double g, double b) : solid_color(color(r, g, b)) {}
 
-	virtual color value(double u, double v, const vec3& p) const {
+	virtual color value([[maybe_unused]] double u, [[maybe_unused]] double v, [[maybe_unused]] const vec3& p) const {
 		return color_value;
 	}
 
@@ -46,7 +46,7 @@ public:
 	}
 
 public:
-	shared_ptr<texture> odd, even;
+	shared_ptr<texture> even, odd;
 };
 
 class noise_texture : public texture {
@@ -54,7 +54,7 @@ public:
 	noise_texture() {}
 	noise_texture(double sc) : scale(sc) {}
 
-	virtual color value(double u, double v, const vec3& p) const {
+	virtual color value([[maybe_unused]] double u, [[maybe_unused]] double v, const vec3& p) const {
 		//return color(1, 1, 1) * 0.5 * (1.0 + noise.noise(scale * p));
 		//return color(1, 1, 1) * noise.turb(p);
 		return color(1, 1, 1) * 0.5 * (1 + sin(scale * p.z() + 10 * noise.turb(p)));
@@ -91,7 +91,7 @@ public:
         STBI_FREE(data);
     }
 
-    virtual color value(double u, double v, const vec3& p) const override {
+    virtual color value(double u, double v, [[maybe_unused]] const vec3& p) const override {
         // If we have no texture data, then return solid cyan as a debugging aid.
         if (data == nullptr)
             return color(0, 1, 1);
@@ -118,3 +118,4 @@ private:
     int width = 0, height = 0;
     int bytes_per_scanline = 0;
 };
+

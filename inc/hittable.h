@@ -137,7 +137,7 @@ public:
         return true;
     }
 
-    virtual bool bounding_box(double time0, double time1, aabb& output_box) const override {
+    virtual bool bounding_box([[maybe_unused]] double time0, [[maybe_unused]] double time1, aabb& output_box) const override {
         output_box = bbox;
         return hasbox;
     }

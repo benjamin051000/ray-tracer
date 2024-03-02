@@ -16,3 +16,4 @@ struct ray {
 	vec3 dir;
 	double tm = 0;
 };
+

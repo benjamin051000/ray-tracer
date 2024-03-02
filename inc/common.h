@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <cstdlib>
 #include <limits>
 #include <memory>
 
@@ -23,10 +22,4 @@ double random_double();
 double random_double(double min, double max);
 
 int random_int(int min, int max);
-
-
-
-// Common headers
-#include "ray.h"
-//#include "vec3.h" // Included in ray.h
 
