@@ -1,4 +1,4 @@
-#include "aabb.h"
+#include "aabb.hpp"
 #include <cmath>
 
 bool aabb::hit(const ray& r, double tmin, double tmax) const {

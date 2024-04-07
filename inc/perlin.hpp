@@ -1,6 +1,6 @@
 #pragma once
-#include "common.h"
-#include "vec3.h"
+#include "common.hpp"
+#include "vec3.hpp"
 
 class perlin {
 public:

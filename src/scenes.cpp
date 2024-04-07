@@ -1,12 +1,12 @@
-#include "scenes.h"
+#include "scenes.hpp"
 
-#include "sphere.h"
-#include "moving_sphere.h"
-#include "material.h"
-#include "aarect.h"
-#include "box.h"
-#include "constant_medium.h"
-#include "bvh.h"
+#include "sphere.hpp"
+#include "moving_sphere.hpp"
+#include "material.hpp"
+#include "aarect.hpp"
+#include "box.hpp"
+#include "constant_medium.hpp"
+#include "bvh.hpp"
 
 //Calculates the color of the pixel.
 color ray_color(const ray& r, const color& background, hittable& world, int depth) {

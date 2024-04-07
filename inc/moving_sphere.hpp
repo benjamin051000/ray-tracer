@@ -1,6 +1,6 @@
 #pragma once
-#include "hittable.h"
-#include "common.h"
+#include "hittable.hpp"
+#include "common.hpp"
 
 class moving_sphere : public hittable {
 public:

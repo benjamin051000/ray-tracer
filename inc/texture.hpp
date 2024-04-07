@@ -1,6 +1,6 @@
 #pragma once
-#include "common.h"
-#include "perlin.h"
+#include "common.hpp"
+#include "perlin.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

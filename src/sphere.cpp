@@ -1,4 +1,4 @@
-#include "sphere.h"
+#include "sphere.hpp"
 
 bool sphere::bounding_box([[maybe_unused]] double t0, [[maybe_unused]] double t1, aabb& output_box) const {
 	output_box = aabb(
