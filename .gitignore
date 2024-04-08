@@ -57,3 +57,5 @@ _deps
 # Added by me
 # Typical output of `cmake -B build .`
 build/
+# Something clang made I guess?
+.cache/
