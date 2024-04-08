@@ -1,4 +1,5 @@
 include_directories(${RayTracing_SOURCE_DIR}/inc)
+include_directories(${RayTracing_SOURCE_DIR}/stb_image)
 
 add_executable(
   raytracer
