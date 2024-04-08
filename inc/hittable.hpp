@@ -21,7 +21,7 @@ struct hit_record {
 	bool front_face;
 
 	inline void set_face_normal(const ray& r, const vec3& outward_normal) {
-		front_face = dot(r.direction(), outward_normal) < 0;
+		front_face = dot(r.direction, outward_normal) < 0;
 		normal = front_face ? outward_normal : -outward_normal;
 	}
 };
@@ -46,7 +46,7 @@ public:
 
     virtual bool hit(
         const ray& r, double t_min, double t_max, hit_record& rec) const override {
-        ray moved_r(r.origin() - offset, r.direction(), r.time());
+        ray moved_r(r.origin - offset, r.direction, r.time);
         if (!ptr->hit(moved_r, t_min, t_max, rec))
             return false;
 
@@ -108,16 +108,16 @@ public:
     }
 
     virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override {
-        auto origin = r.origin();
-        auto direction = r.direction();
+        auto origin = r.origin;
+        auto direction = r.direction;
 
-        origin[0] = cos_theta * r.origin()[0] - sin_theta * r.origin()[2];
-        origin[2] = sin_theta * r.origin()[0] + cos_theta * r.origin()[2];
+        origin[0] = cos_theta * r.origin[0] - sin_theta * r.origin[2];
+        origin[2] = sin_theta * r.origin[0] + cos_theta * r.origin[2];
 
-        direction[0] = cos_theta * r.direction()[0] - sin_theta * r.direction()[2];
-        direction[2] = sin_theta * r.direction()[0] + cos_theta * r.direction()[2];
+        direction[0] = cos_theta * r.direction[0] - sin_theta * r.direction[2];
+        direction[2] = sin_theta * r.direction[0] + cos_theta * r.direction[2];
 
-        ray rotated_r(origin, direction, r.time());
+        ray rotated_r(origin, direction, r.time);
 
         if (!ptr->hit(rotated_r, t_min, t_max, rec))
             return false;

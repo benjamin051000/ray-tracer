@@ -9,14 +9,14 @@ bool sphere::bounding_box([[maybe_unused]] double t0, [[maybe_unused]] double t1
 
 
 bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const {
-	vec3 oc = r.origin() - center;
+	vec3 oc = r.origin - center;
 
 	//Calculate discriminant
 	/*2's and 4's have been commented out, as they cancel out
 	in the grand scheme of things. However, they are helpful
 	in understanding the math, so I will leave the comments in for now.*/
-	const auto a = r.direction().length_squared(),
-		half_b = dot(oc, r.direction()), // Represents half of b, since it's normally *2.
+	const auto a = r.direction.length_squared(),
+		half_b = dot(oc, r.direction), // Represents half of b, since it's normally *2.
 		c = oc.length_squared() - radius * radius;
 
 	const auto discriminant = half_b * half_b - /* 4 * */ a * c;

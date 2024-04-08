@@ -2,14 +2,8 @@
 
 ray::ray() {}
 
-ray::ray(const point3& origin, const vec3& direction, double time) :
-	orig(origin), dir(direction), tm(time) {}
+ray::ray(const point3& origin, const vec3& direction, const double time) :
+	origin(origin), direction(direction), time(time) {}
 
-point3 ray::origin() const { return orig; }
-
-vec3 ray::direction() const { return dir; }
-
-point3 ray::at(const double t) const { return orig + t * dir; }
-
-double ray::time() const { return tm; }
+[[nodiscard]] point3 ray::at(const double t) const noexcept { return origin + t * direction; }
 
