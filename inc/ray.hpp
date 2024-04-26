@@ -4,7 +4,7 @@
 struct ray {
 	constexpr ray() = default;
 
-	constexpr ray(const point3& origin, const vec3& direction, const double time) :
+	constexpr ray(const point3& origin, const vec3& direction, const double time = 0) :
 		origin(origin), direction(direction), time(time) {}
 
 	[[nodiscard]] constexpr point3 at(const double t) const { return origin + t * direction; }
