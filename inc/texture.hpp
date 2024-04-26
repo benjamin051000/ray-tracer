@@ -6,6 +6,7 @@
 #include "stb_image.h"
 
 #include <iostream>
+#include <algorithm>
 
 class texture {
 public:
@@ -97,8 +98,8 @@ public:
             return color(0, 1, 1);
 
         // Clamp input texture coordinates to [0,1] x [1,0]
-        u = clamp(u, 0.0, 1.0);
-        v = 1.0 - clamp(v, 0.0, 1.0);  // Flip V to image coordinates
+        u = std::clamp(u, 0.0, 1.0);
+        v = 1.0 - std::clamp(v, 0.0, 1.0);  // Flip V to image coordinates
 
         auto i = static_cast<int>(u * width);
         auto j = static_cast<int>(v * height);
