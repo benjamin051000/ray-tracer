@@ -94,6 +94,7 @@ void run(
 struct options {
     Scene scene;
     unsigned int width, height, spp, jobs;
+	float aspect_ratio;
 };
 
 options parse_args(int argc, char** argv) {
@@ -103,6 +104,8 @@ options parse_args(int argc, char** argv) {
         std::cout << 
             "Usage:\n"
             "\traytracer <scene number> <image width> <image height> <samples per pixel> <num jobs>\n\n"
+			"(Aspect ratio is calculated automatically)\n"
+			"\n"
             "Scene numbers:\n"
             "1. Random scene (Cover of book 1)\n"
             "2. Two spheres\n"
@@ -147,6 +150,9 @@ options parse_args(int argc, char** argv) {
     // num jobs
     opts.jobs = std::stoi(args.at(4));
 
+	opts.aspect_ratio = static_cast<float>(opts.height) / static_cast<float>(opts.width);
+	std::cout << "aspect_ratio=" << opts.aspect_ratio << "\n";
+
     return opts;
 }
 
@@ -155,7 +161,7 @@ int main(int argc, char** argv) {
     auto opts = parse_args(argc, argv);
 	/* Output image options */
 	// auto opts.width = 1200;
-	auto aspect_ratio = 4.0 / 3.0;
+	// auto aspect_ratio = 4.0 / 3.0;
 	//auto opts.height = static_cast<int>(opts.width / aspect_ratio);
 	// auto opts.height = 900;
 
@@ -221,9 +227,9 @@ int main(int argc, char** argv) {
 
 	case Scene::CORNELL_BOX:
 		world = cornell_box();
-		aspect_ratio = 1;
-		opts.width = 800;
-		opts.height = 800;
+		// aspect_ratio = 1;
+		// opts.width = 800;
+		// opts.height = 800;
 		background = color(0, 0, 0);
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
@@ -232,9 +238,9 @@ int main(int argc, char** argv) {
 
 	case Scene::CORNELL_SMOKE:
 		world = cornell_smoke();
-		aspect_ratio = 1;
-		opts.width = 600;
-		opts.height = 600;
+		// aspect_ratio = 1;
+		// opts.width = 600;
+		// opts.height = 600;
 		lookfrom = point3(278, 278, -800);
 		lookat = point3(278, 278, 0);
 		vfov = 40;
@@ -242,9 +248,9 @@ int main(int argc, char** argv) {
 
 	case Scene::FINAL_SCENE:
 		world = final_scene();
-		aspect_ratio = 4.0/3.0;
-		opts.width = 640;
-		opts.height = 480;
+		// aspect_ratio = 4.0/3.0;
+		// opts.width = 640;
+		// opts.height = 480;
 		background = color(0, 0, 0);
 		lookfrom = point3(478, 278, -600);
 		lookat = point3(278, 278, 0);
@@ -259,7 +265,7 @@ int main(int argc, char** argv) {
 	/*----------Set up Camera----------*/
 	vec3 vup(0, 1, 0);
 	auto dist_to_focus = 10.0;
-	camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+	camera cam(lookfrom, lookat, vup, vfov, opts.aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
 	const unsigned int IMG_NUM_PIXELS = opts.width * opts.height * 3U;
