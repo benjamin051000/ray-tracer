@@ -65,8 +65,8 @@ public:
             return false;
 
         output_box = aabb(
-            output_box.min() + offset,
-            output_box.max() + offset
+            output_box.min + offset,
+            output_box.max + offset
 		);
 
         return true;
@@ -97,9 +97,9 @@ public:
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 for (int k = 0; k < 2; k++) {
-                    const auto x = i * bbox.max().x() + (1 - static_cast<double>(i)) * bbox.min().x();
-                    const auto y = j * bbox.max().y() + (1 - static_cast<double>(j)) * bbox.min().y();
-                    const auto z = k * bbox.max().z() + (1 - static_cast<double>(k)) * bbox.min().z();
+                    const auto x = i * bbox.max.x() + (1 - static_cast<double>(i)) * bbox.min.x();
+                    const auto y = j * bbox.max.y() + (1 - static_cast<double>(j)) * bbox.min.y();
+                    const auto z = k * bbox.max.z() + (1 - static_cast<double>(k)) * bbox.min.z();
 
                     const auto newx = cos_theta * x + sin_theta * z;
                     const auto newz = -sin_theta * x + cos_theta * z;
