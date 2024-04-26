@@ -3,7 +3,6 @@ include_directories(${RayTracing_SOURCE_DIR}/stb_image)
 
 add_executable(
   raytracer
-  aabb.cpp
   aarect.cpp
   box.cpp
   bvh.cpp
