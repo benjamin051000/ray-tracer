@@ -34,11 +34,11 @@ struct hit_record {
 struct hittable {
 	virtual bool hit(
 		const ray& r, 
-		double tmin, 
-		double tmax, 
+		const double tmin, 
+		const double tmax, 
 		hit_record& rec) const = 0;
 
-	virtual bool bounding_box(double t0, double t1, aabb& output_box) const = 0;
+	virtual bool bounding_box(const double t0, const double t1, aabb& output_box) const = 0;
 };
 
 
@@ -48,8 +48,13 @@ public:
         : ptr(p), offset(displacement) {}
 
     virtual bool hit(
-        const ray& r, double t_min, double t_max, hit_record& rec) const override {
-        ray moved_r(r.origin - offset, r.direction, r.time);
+        const ray& r, 
+		const double t_min, 
+		const double t_max, 
+		hit_record& rec
+	) const override {
+        const ray moved_r(r.origin - offset, r.direction, r.time);
+
         if (!ptr->hit(moved_r, t_min, t_max, rec))
             return false;
 
@@ -59,13 +64,14 @@ public:
         return true;
     }
 
-    virtual bool bounding_box(double time0, double time1, aabb& output_box) const override {
+    virtual bool bounding_box(const double time0, const double time1, aabb& output_box) const override {
         if (!ptr->bounding_box(time0, time1, output_box))
             return false;
 
         output_box = aabb(
             output_box.min() + offset,
-            output_box.max() + offset);
+            output_box.max() + offset
+		);
 
         return true;
     }
@@ -140,7 +146,7 @@ public:
         return true;
     }
 
-    virtual bool bounding_box([[maybe_unused]] double time0, [[maybe_unused]] double time1, aabb& output_box) const override {
+    virtual bool bounding_box([[maybe_unused]] const double time0, [[maybe_unused]] const double time1, aabb& output_box) const override {
         output_box = bbox;
         return hasbox;
     }
