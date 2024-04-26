@@ -2,9 +2,12 @@
 #include "common.hpp"
 #include "aabb.hpp"
 
-/*Tells the compiler that the hit pointer 
-in hit_record points to a class 
-(alternative would be to #include "material.h")*/
+// Use a forward declaration for this class
+// rather than `#include "material.hpp"` because
+// the latter introduces a circular dependency
+// (`material.hpp` relies on structs in this file)
+// which causes weird issues. A forward declaration
+// is just easier.
 class material;
 
 
