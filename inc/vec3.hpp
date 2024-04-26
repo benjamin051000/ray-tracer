@@ -3,8 +3,7 @@
 #include <cmath>
 
 
-class vec3 {
-public:
+struct vec3 {
 	double e[3]{0, 0, 0}; 
 
 	//Constructors
