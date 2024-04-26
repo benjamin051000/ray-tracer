@@ -1,7 +1,7 @@
 #pragma once
-#include "hittable_list.h"
-#include "aabb.h"
-#include "common.h"
+#include "hittable_list.hpp"
+#include "aabb.hpp"
+#include "common.hpp"
 #include <vector>
 
 class bvh_node : public hittable {

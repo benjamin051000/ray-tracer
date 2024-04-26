@@ -1,5 +1,5 @@
-#include "box.h"
-#include "aarect.h"
+#include "box.hpp"
+#include "aarect.hpp"
 
 box::box(const point3& p0, const point3& p1, shared_ptr<material> ptr) {
 	box_min = p0;

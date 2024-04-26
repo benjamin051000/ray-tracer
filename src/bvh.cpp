@@ -1,4 +1,4 @@
-#include "bvh.h"
+#include "bvh.hpp"
 #include <algorithm>
 
 bool bvh_node::bounding_box([[maybe_unused]] double t0, [[maybe_unused]] double t1, aabb& output_box) const {

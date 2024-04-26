@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common.h"
-#include "hittable_list.h"
+#include "common.hpp"
+#include "hittable_list.hpp"
 
 class box : public hittable {
 public:

@@ -1,4 +1,4 @@
-#include "hittable_list.h"
+#include "hittable_list.hpp"
 
 
 bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) const {

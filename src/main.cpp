@@ -8,13 +8,13 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-#include "common.h"
+#include "common.hpp"
 
-#include "hittable_list.h"
+#include "hittable_list.hpp"
 
-#include "scenes.h"
+#include "scenes.hpp"
 
-#include "camera.h"
+#include "camera.hpp"
 
 using std::chrono::steady_clock;
 using std::chrono::duration_cast;

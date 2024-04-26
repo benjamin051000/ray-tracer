@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common.h"
-#include "hittable.h"
+#include "common.hpp"
+#include "hittable.hpp"
 
 class xy_rect : public hittable {
 public:

@@ -1,4 +1,4 @@
-#include "moving_sphere.h"
+#include "moving_sphere.hpp"
 
 bool moving_sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const {
 	//Calculate discriminant

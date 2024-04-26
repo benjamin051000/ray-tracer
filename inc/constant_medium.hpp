@@ -1,10 +1,10 @@
 #pragma once
 
-#include "common.h"
+#include "common.hpp"
 
-#include "hittable.h"
-#include "material.h"
-#include "texture.h"
+#include "hittable.hpp"
+#include "material.hpp"
+#include "texture.hpp"
 
 class constant_medium : public hittable {
 public:

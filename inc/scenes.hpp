@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hittable_list.h"
+#include "hittable_list.hpp"
 
 
 enum class Scene {

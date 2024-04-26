@@ -1,6 +1,6 @@
 #pragma once
-#include "common.h"
-#include "aabb.h"
+#include "common.hpp"
+#include "aabb.hpp"
 
 /*Tells the compiler that the hit pointer 
 in hit_record points to a class 

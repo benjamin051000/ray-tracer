@@ -1,6 +1,6 @@
 #pragma once
-#include "hittable.h"
-#include  "texture.h"
+#include "hittable.hpp"
+#include  "texture.hpp"
 
 
 // ABC

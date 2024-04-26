@@ -1,5 +1,5 @@
 #pragma once
-#include "ray.h"
+#include "ray.hpp"
 
 class aabb {
 public:

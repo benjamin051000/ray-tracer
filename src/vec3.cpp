@@ -1,6 +1,6 @@
-#include "vec3.h"
+#include "vec3.hpp"
 
-#include "common.h"
+#include "common.hpp"
 
 // Constructors
 vec3::vec3() : e{ 0, 0, 0 } {}
