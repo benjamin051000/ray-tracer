@@ -67,7 +67,7 @@ bvh_node::bvh_node(
         }
     }
     else {
-        std::sort(objects.begin() + start, objects.begin() + end, comparator);
+        std::sort(objects.begin() + static_cast<long>(start), objects.begin() + static_cast<long>(end), comparator);
 
         auto mid = start + object_span / 2;
         left = make_shared<bvh_node>(objects, start, mid, time0, time1);
