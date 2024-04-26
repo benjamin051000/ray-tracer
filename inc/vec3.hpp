@@ -3,7 +3,10 @@
 #include <cmath>
 
 
-struct vec3 {
+class vec3 {
+public:
+	double e[3]{0, 0, 0}; 
+
 	//Constructors
 	constexpr vec3() = default;
 	constexpr vec3(const double e0, const double e1, const double e2) : e{ e0, e1, e2 } {}
@@ -88,8 +91,6 @@ struct vec3 {
 
 	static vec3 random(const double min, const double max);
 
-	//Stores coordinates
-	double e[3]{0, 0, 0};
 };
 
 // Type aliases for vec3
