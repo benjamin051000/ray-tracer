@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "ray.hpp"
 
 class camera {
 public:
@@ -41,9 +42,9 @@ public:
 		time1 = _time1;
 	}
 
-	ray get_ray(double s, double t) {
-		vec3 rd = lens_radius * random_in_unit_disk();
-		vec3 offset = u * rd.x() + v * rd.y();
+	ray get_ray(double s, double t) const {
+		const vec3 rd = lens_radius * random_in_unit_disk();
+		const vec3 offset = u * rd.x() + v * rd.y();
 		return ray(
 			origin + offset, 
 			lower_left_corner + s * horizontal + t * vertical - origin - offset,

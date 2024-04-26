@@ -20,6 +20,8 @@ using std::chrono::steady_clock;
 using std::chrono::duration_cast;
 
 
+namespace {
+
 void run(
 	unsigned int specified_start_width,
 	unsigned int specified_start_height,
@@ -28,7 +30,7 @@ void run(
 	unsigned int image_width,
 	unsigned int image_height,
 	unsigned int spp,
-	camera& cam,
+	const camera& cam,
 	color& background,
 	hittable_list& world,
 	int max_depth,
@@ -38,23 +40,23 @@ void run(
 	double percentage = 0;
 	const double percentChange = 100.0 / specified_end_height;
 
-	auto start = steady_clock::now();
+	const auto start = steady_clock::now();
 
 	// Main loop
-	for (unsigned int y = specified_start_height; y < specified_end_height; y++) {
+	for (unsigned y = specified_start_height; y < specified_end_height; y++) {
 
-		auto row_start = steady_clock::now();
+		const auto row_start = steady_clock::now();
 
-		for (unsigned int x = specified_start_width; x < specified_end_width; x++) {
+		for (unsigned x = specified_start_width; x < specified_end_width; x++) {
 			color pixel_color(0, 0, 0);
 			//Repeat samples-per-pixel times
-			for (unsigned int s = 0; s < spp; s++) {
+			for (unsigned s = 0; s < spp; s++) {
 
 				//Get a random ray in the pixel
-				float u = float(x + random_double()) / float(image_width);
-				float  v = float(y + random_double()) / float(image_height);
+				const float u = float(x + random_double()) / float(image_width);
+				const float  v = float(y + random_double()) / float(image_height);
 
-				ray r = cam.get_ray(u, v);
+				const ray r = cam.get_ray(u, v);
 				pixel_color += ray_color(r, background, world, max_depth);
 			}
 
@@ -64,19 +66,19 @@ void run(
 			pixel_color = vec3(sqrt(pixel_color[0]), sqrt(pixel_color[1]), sqrt(pixel_color[2]));
 
 			//Write the rgb values
-			unsigned char ir = int(255 * pixel_color[0]),
-				ig = int(255 * pixel_color[1]),
-				ib = int(255 * pixel_color[2]);
+			const unsigned char ir = static_cast<unsigned char>(255 * pixel_color[0]),
+				ig = static_cast<unsigned char>(255 * pixel_color[1]),
+				ib = static_cast<unsigned char>(255 * pixel_color[2]);
 
-			auto index = 3 * image_width * (image_height - 1 - y) + 3 * x;
+			const auto index = 3 * image_width * (image_height - 1 - y) + 3 * x;
 			pixels[index] = ir;
 			pixels[index + 1] = ig;
 			pixels[index + 2] = ib;
 		}
 
-		auto row_done = steady_clock::now();
+		const auto row_done = steady_clock::now();
 		percentage += percentChange;
-		auto elapsed_row = duration_cast<std::chrono::seconds>(row_done - row_start).count();
+		const auto elapsed_row = duration_cast<std::chrono::seconds>(row_done - row_start).count();
 
 		std::cout << "[" << std::this_thread::get_id() << "] " << percentage << "% complete(Row time : " << elapsed_row << " s)\n";
 
@@ -84,9 +86,9 @@ void run(
 		std::cout << "\tEst. time remaining: " << est_time_remaining << " s" << std::endl;*/
 	}
 
-	auto stop = steady_clock::now();
+	const auto stop = steady_clock::now();
 
-	auto total_seconds = duration_cast<std::chrono::seconds>(stop - start).count();
+	const auto total_seconds = duration_cast<std::chrono::seconds>(stop - start).count();
 	std::cout << "[" << std::this_thread::get_id() << "] Total render time: " << total_seconds / 60 << " min " << total_seconds % 60 << " sec" << std::endl;
 
 }
@@ -127,7 +129,7 @@ options parse_args(int argc, char** argv) {
 
     options opts;
     // First arg is the scene
-    const unsigned num = std::stoi(args.at(0));
+    const int num = std::stoi(args.at(0));
 
     const std::unordered_map<int, Scene> scenes = {
         {1, Scene::RANDOM_SCENE},
@@ -143,12 +145,12 @@ options parse_args(int argc, char** argv) {
     opts.scene = scenes.at(num);
 
     // Image width, height
-    opts.width = std::stoi(args.at(1));
-    opts.height = std::stoi(args.at(2));
+    opts.width = static_cast<unsigned int>(std::stoi(args.at(1)));
+    opts.height = static_cast<unsigned int>(std::stoi(args.at(2)));
     // spp
-    opts.spp = std::stoi(args.at(3));
+    opts.spp = static_cast<unsigned int>(std::stoi(args.at(3)));
     // num jobs
-    opts.jobs = std::stoi(args.at(4));
+    opts.jobs = static_cast<unsigned int>(std::stoi(args.at(4)));
 
 	opts.aspect_ratio = static_cast<float>(opts.height) / static_cast<float>(opts.width);
 	std::cout << "aspect_ratio=" << opts.aspect_ratio << "\n";
@@ -156,9 +158,11 @@ options parse_args(int argc, char** argv) {
     return opts;
 }
 
+} // end of anonymous namespace
+
 int main(int argc, char** argv) {
 
-    auto opts = parse_args(argc, argv);
+    const auto opts = parse_args(argc, argv);
 	/* Output image options */
 	// auto opts.width = 1200;
 	// auto aspect_ratio = 4.0 / 3.0;
@@ -263,9 +267,9 @@ int main(int argc, char** argv) {
 	}
 
 	/*----------Set up Camera----------*/
-	vec3 vup(0, 1, 0);
-	auto dist_to_focus = 10.0;
-	camera cam(lookfrom, lookat, vup, vfov, opts.aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
+	const vec3 vup(0, 1, 0);
+	const auto dist_to_focus = 10.0;
+	const camera cam(lookfrom, lookat, vup, vfov, opts.aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
 	// Array to hold pixel colors (x * y * num_pixels)
 	const unsigned int IMG_NUM_PIXELS = opts.width * opts.height * 3U;
@@ -310,7 +314,7 @@ int main(int argc, char** argv) {
 
 	//Set up the output file
 	const std::string filename = "render_" + std::to_string(opts.width) + "_" + std::to_string(opts.height) + "_" + std::to_string(opts.spp) + ".jpg";
-	stbi_write_jpg(filename.c_str(), opts.width, opts.height, 3, pixels, 100);
+	stbi_write_jpg(filename.c_str(), static_cast<int>(opts.width), static_cast<int>(opts.height), 3, pixels, 100);
 	std::cout << "Done." << std::endl;
 
 	delete[] pixels;  // Free memory
