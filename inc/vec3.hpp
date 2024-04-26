@@ -5,17 +5,17 @@
 
 struct vec3 {
 	//Constructors
-	vec3();
-	vec3(const double e0, const double e1, const double e2);
+	constexpr vec3();
+	constexpr vec3(const double e0, const double e1, const double e2);
 
 	// getters
-	constexpr double x() const { return e[0]; }
-	constexpr double y() const { return e[1]; }
-	constexpr double z() const { return e[2]; }
+	[[nodiscard]] constexpr double x() const { return e[0]; }
+	[[nodiscard]] constexpr double y() const { return e[1]; }
+	[[nodiscard]] constexpr double z() const { return e[2]; }
 
 
 	//General operator overloading
-	[[nodiscard]] vec3 operator-() const; 
+	[[nodiscard]] constexpr vec3 operator-() const; 
 
 	[[nodiscard]] constexpr double operator[](int i) const { 
 		return e[i];
@@ -26,14 +26,14 @@ struct vec3 {
 	}
 
 	//Assignment operator overloading
-	vec3& operator+=(const vec3& rhs);
-	vec3& operator-=(const vec3& rhs);
-	vec3& operator*=(const vec3& rhs);
-	vec3& operator/=(const vec3& rhs);
+	constexpr vec3& operator+=(const vec3& rhs);
+	constexpr vec3& operator-=(const vec3& rhs);
+	constexpr vec3& operator*=(const vec3& rhs);
+	constexpr vec3& operator/=(const vec3& rhs);
 
 	//Multiply by scalar
-	vec3& operator*=(const double t);
-	vec3& operator/=(const double t);
+	constexpr vec3& operator*=(const double t);
+	constexpr vec3& operator/=(const double t);
 
 
 	[[nodiscard]] constexpr double length() const {
@@ -64,33 +64,33 @@ using point3 = vec3;
 using color = vec3;
 
 /*-----Addition/Subtraction operators-----*/
-[[nodiscard]] vec3 operator+(const vec3& u, const vec3& v);
+[[nodiscard]] constexpr vec3 operator+(const vec3& u, const vec3& v);
 
-[[nodiscard]] vec3 operator-(const vec3& u, const vec3& v);
+[[nodiscard]] constexpr vec3 operator-(const vec3& u, const vec3& v);
 
 /*-----Multiplication operators-----*/
-[[nodiscard]] vec3 operator*(const double t, const vec3& v);
+[[nodiscard]] constexpr vec3 operator*(const double t, const vec3& v);
 
-[[nodiscard]] vec3 operator*(const vec3& v, double t);
+[[nodiscard]] constexpr vec3 operator*(const vec3& v, double t);
 
-[[nodiscard]] vec3 operator*(const vec3& u, const vec3& v);
+[[nodiscard]] constexpr vec3 operator*(const vec3& u, const vec3& v);
 
 /*-----Division operators-----*/
-[[nodiscard]] vec3 operator/(const vec3& v1, const vec3& v2);
+[[nodiscard]] constexpr vec3 operator/(const vec3& v1, const vec3& v2);
 
-[[nodiscard]] vec3 operator/(vec3 v, double t);
+[[nodiscard]] constexpr vec3 operator/(vec3 v, double t);
 
 //Miscellaneous operators
-[[nodiscard]] vec3 unit_vector(vec3 v);
+[[nodiscard]] constexpr vec3 unit_vector(vec3 v);
 
 [[nodiscard]] constexpr double dot(const vec3& u, const vec3& v) {
 	return u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
 }
 
-[[nodiscard]] vec3 cross(const vec3& u, const vec3& v);
+[[nodiscard]] constexpr vec3 cross(const vec3& u, const vec3& v);
 
 // cout
-std::ostream& operator<<(std::ostream& output, vec3& t);
+constexpr std::ostream& operator<<(std::ostream& output, vec3& t);
 
 /*----------Random Vector Generators----------*/
 [[nodiscard]] vec3 random_in_unit_disk();
@@ -99,7 +99,7 @@ std::ostream& operator<<(std::ostream& output, vec3& t);
 
 [[nodiscard]] vec3 random_unit_vector();
 
-[[nodiscard]] vec3 reflect(const vec3& v, const vec3& n);
+[[nodiscard]] constexpr vec3 reflect(const vec3& v, const vec3& n);
 
-[[nodiscard]] vec3 refract(const vec3& uv, const vec3& n, const double etai_over_etat);
+[[nodiscard]] constexpr vec3 refract(const vec3& uv, const vec3& n, const double etai_over_etat);
 
