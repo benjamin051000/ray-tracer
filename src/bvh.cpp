@@ -46,10 +46,11 @@ bvh_node::bvh_node(
     std::vector<shared_ptr<hittable>>& objects,
     size_t start, size_t end, float time0, float time1) 
 {
-    int axis = rand() % 3;
-    auto comparator = (axis == 0) ? box_x_compare
-        : (axis == 1) ? box_y_compare
-        : box_z_compare;
+	// TODO WARNING BUG for some reason I have to declare axis outside the lambda and capture it.
+	// Why can't I just put `rand() % 3` inside the lambda's box_compare call? I have no idea. 
+	// It causes a segfault when I try to. 
+	const int axis = rand() % 3;
+	const auto comparator = [axis](auto a, auto b) { return box_compare(a, b, axis); };
 
     size_t object_span = end - start;
 
