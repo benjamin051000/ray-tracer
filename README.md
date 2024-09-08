@@ -1,7 +1,6 @@
 # ray-tracer
-Based on the [Ray Tracing in One Weekend](https://raytracing.github.io/) series, extended with multithreading support for increased performance.
+Based on the [Ray Tracing in One Weekend](https://raytracing.github.io/) series.
 
-## Renders
 ![Random Spheres Render](renders/render_1920_1080_100.jpg)
 
 1920x1080, 100 samples per pixel (spp)
