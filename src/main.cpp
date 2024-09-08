@@ -316,7 +316,5 @@ int main(int argc, char** argv) {
 	const std::string filename = "render_" + std::to_string(opts.width) + "_" + std::to_string(opts.height) + "_" + std::to_string(opts.spp) + ".jpg";
 	stbi_write_jpg(filename.c_str(), static_cast<int>(opts.width), static_cast<int>(opts.height), 3, pixels.data(), 100);
 	std::cout << "Done." << std::endl;
-
-	// delete[] pixels;  // Free memory
 }
 
