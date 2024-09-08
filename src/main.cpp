@@ -34,7 +34,7 @@ void run(
 	color& background,
 	hittable_list& world,
 	int max_depth,
-	unsigned char* pixels
+	std::vector<unsigned char>& pixels
 ) {
 	/*----------Render the image----------*/
 	double percentage = 0;
@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
 
 	// Array to hold pixel colors (x * y * num_pixels)
 	const unsigned int IMG_NUM_PIXELS = opts.width * opts.height * 3U;
-	unsigned char* pixels = new unsigned char[IMG_NUM_PIXELS];
+	std::vector<unsigned char> pixels(IMG_NUM_PIXELS);
 
 	std::vector<std::thread> threads(opts.jobs);
 
@@ -314,9 +314,9 @@ int main(int argc, char** argv) {
 
 	//Set up the output file
 	const std::string filename = "render_" + std::to_string(opts.width) + "_" + std::to_string(opts.height) + "_" + std::to_string(opts.spp) + ".jpg";
-	stbi_write_jpg(filename.c_str(), static_cast<int>(opts.width), static_cast<int>(opts.height), 3, pixels, 100);
+	stbi_write_jpg(filename.c_str(), static_cast<int>(opts.width), static_cast<int>(opts.height), 3, pixels.data(), 100);
 	std::cout << "Done." << std::endl;
 
-	delete[] pixels;  // Free memory
+	// delete[] pixels;  // Free memory
 }
 
