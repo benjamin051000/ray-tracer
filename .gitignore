@@ -59,3 +59,5 @@ _deps
 build/
 # Something clang made I guess?
 .cache/
+# Outputs files
+render_*.jpg
