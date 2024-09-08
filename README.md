@@ -15,3 +15,17 @@ CPU: Intel i5 12400F (6C/12T) @ 4.3GHz
 Render time @ 16 threads: 27:56 min
 
 CPU: Intel i5 12400F (6C/12T) @ 4.3GHz
+
+# Roadmap
+| Milestone | Status |
+| - | - | 
+| Cornell Box | ✅ done | 
+| multithreading | ✅ done | 
+| SIMD | 📋 planned |
+| RV32G (RV32IMAFD) | 📋 planned | 
+| Test suite | 📋 planned | 
+| Third book | 📋 planned | 
+| [Ray Tracing: GPU Edition](https://raytracing.github.io/gpu-tracing/book/RayTracingGPUEdition.html) | 📋 planned | 
+| real-time output (via SDL2 or imgui) | 💡 idea | 
+| Vulkan mode | 💡 idea |
+

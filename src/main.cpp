@@ -152,7 +152,7 @@ options parse_args(int argc, char** argv) {
     // num jobs
     opts.jobs = static_cast<unsigned int>(std::stoi(args.at(4)));
 
-	opts.aspect_ratio = static_cast<float>(opts.height) / static_cast<float>(opts.width);
+	opts.aspect_ratio = static_cast<float>(opts.width) / static_cast<float>(opts.height);
 	std::cout << "aspect_ratio=" << opts.aspect_ratio << "\n";
 
     return opts;
