@@ -5,7 +5,7 @@ Based on the [Ray Tracing in One Weekend](https://raytracing.github.io/) series.
 
 1920x1080, 300 samples per pixel (spp)
 
-Render time @ 12 threads: 10 min, 46 sec
+Render time @ 12 threads: 31 min, 46 sec
 
 CPU: Intel i5 12400F (6C/12T) @ 4.3GHz
 
