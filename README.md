@@ -1,9 +1,9 @@
 # ray-tracer
 Based on the [Ray Tracing in One Weekend](https://raytracing.github.io/) series.
 
-![Random Spheres Render](renders/render_1920_1080_100.jpg)
+![Random Spheres Render](renders/render_1920_1080_300.jpg)
 
-1920x1080, 100 samples per pixel (spp)
+1920x1080, 300 samples per pixel (spp)
 
 Render time @ 12 threads: 10 min, 46 sec
 
