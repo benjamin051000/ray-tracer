@@ -80,7 +80,7 @@ void run(
 		percentage += percentChange;
 		const auto elapsed_row = duration_cast<std::chrono::seconds>(row_done - row_start).count();
 
-		std::cout << "[" << std::this_thread::get_id() << "] " << percentage << "% complete(Row time : " << elapsed_row << " s)\n";
+		std::cout << "[" << std::this_thread::get_id() << "] " << percentage << "% complete (Row time : " << elapsed_row << " s)\n";
 
 		/*auto est_time_remaining = (elapsed_row / percentage) * (100 - percentage);
 		std::cout << "\tEst. time remaining: " << est_time_remaining << " s" << std::endl;*/
