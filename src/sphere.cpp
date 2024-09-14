@@ -8,7 +8,7 @@ bool sphere::bounding_box([[maybe_unused]] double t0, [[maybe_unused]] double t1
 }
 
 
-bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const {
+bool sphere::hit(const ray& r, const double tmin, const double tmax, hit_record& rec) const {
 	vec3 oc = r.origin - center;
 
 	//Calculate discriminant
@@ -20,7 +20,7 @@ bool sphere::hit(const ray& r, double tmin, double tmax, hit_record& rec) const 
 		c = oc.length_squared() - radius * radius;
 
 	const auto discriminant = half_b * half_b - /* 4 * */ a * c;
-	if (discriminant < 0) return false;
+	[[likely]] if (discriminant < 0) return false;
 
 
 	auto sqrtd = sqrt(discriminant);
