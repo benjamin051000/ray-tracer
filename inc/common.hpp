@@ -21,10 +21,7 @@ constexpr auto PI = 3.1415926535897932385;
 	return deg * PI / 180;
 }
 
-// namespace random {
 [[nodiscard]] double random_double();
-
 [[nodiscard]] double random_double(const double min, const double max);
 [[nodiscard]] int random_int(const int min, const int max);
 
-// } // end of namespace random
